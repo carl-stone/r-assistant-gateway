@@ -3,3 +3,9 @@ dist/
 coverage/
 *.tgz
 .DS_Store
+**/.Rproj.user/
+.Rproj.user
+test/corpus/**/.Rhistory
+test/corpus/**/.RData
+test/corpus/**/raw/
+test/corpus/**/raw-captures/

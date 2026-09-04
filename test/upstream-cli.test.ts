@@ -1,13 +1,17 @@
+import os from "node:os";
+import path from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import {
 	brandUpstreamCliText,
 	installUpstreamFetchAdapter,
 	prepareUpstreamCliArgv,
+	resolveOauthAuthFilePaths,
 } from "../src/upstream-cli.js";
 
 describe("upstream CLI delegation", () => {
 	afterEach(() => {
 		vi.unstubAllGlobals();
+		vi.unstubAllEnvs();
 	});
 
 	test("forwards CLI arguments with the Posit port and memory defaults", () => {
@@ -66,7 +70,21 @@ describe("upstream CLI delegation", () => {
 		).toBe("Stop with `npx posit-codex-gateway stop`.");
 		const updateNotice =
 			"A newer version of openai-oauth is available: 2.0.0 -> 2.1.0.\nRun `npx openai-oauth@latest` to use the newest version.";
-		expect(brandUpstreamCliText(updateNotice)).toBe(updateNotice);
+		expect(brandUpstreamCliText(updateNotice)).toBe(
+			"A newer pinned OAuth runtime is available: 2.0.0 -> 2.1.0. Install a posit-codex-gateway release that supports it instead of upgrading the runtime directly.",
+		);
+	});
+
+	test("resolves every OAuth credential fallback", () => {
+		const codexHome = path.join(os.tmpdir(), "custom-codex-home");
+		vi.stubEnv("CODEX_HOME", codexHome);
+		expect(resolveOauthAuthFilePaths([])).toEqual([
+			path.join(codexHome, "auth.json"),
+			path.join(os.homedir(), ".codex", "auth.json"),
+		]);
+		expect(resolveOauthAuthFilePaths(["--oauth-file", "custom.json"])).toEqual([
+			"custom.json",
+		]);
 	});
 
 	test("preserves cancellation and the exact streaming response", async () => {
@@ -147,6 +165,55 @@ describe("upstream CLI delegation", () => {
 		}
 	});
 
+	test("does not let diagnostic logger failures alter requests", async () => {
+		const response = new Response("stream", {
+			headers: { "content-type": "text/event-stream" },
+		});
+		const upstream = vi.fn(async () => response);
+		vi.stubGlobal("fetch", upstream);
+		const restore = installUpstreamFetchAdapter(() => {
+			throw new Error("logger failed");
+		});
+		try {
+			await expect(
+				fetch("https://example.test/responses", {
+					method: "POST",
+					body: JSON.stringify({ model: "gpt-5.6-sol", stream: true }),
+				}),
+			).resolves.toBe(response);
+			expect(upstream).toHaveBeenCalledOnce();
+		} finally {
+			restore();
+		}
+	});
+
+	test("adapts byte-encoded JSON request bodies", async () => {
+		const upstream = vi.fn(
+			async (
+				_input: Parameters<typeof fetch>[0],
+				_init?: Parameters<typeof fetch>[1],
+			) => new Response("upstream"),
+		);
+		vi.stubGlobal("fetch", upstream);
+		const restore = installUpstreamFetchAdapter();
+		try {
+			await fetch("https://example.test/responses", {
+				method: "POST",
+				body: new TextEncoder().encode(
+					JSON.stringify({
+						model: "gpt-5.6-sol",
+						prompt_cache_options: { mode: "explicit" },
+					}),
+				),
+			});
+			const forwarded = upstream.mock.calls[0]?.[1];
+			const body = JSON.parse(String(forwarded?.body));
+			expect(body.prompt_cache_options).toBeUndefined();
+		} finally {
+			restore();
+		}
+	});
+
 	test("strips only the gateway diagnostics extension", () => {
 		expect(prepareUpstreamCliArgv(["--detach", "--diagnostics"])).toEqual({
 			argv: ["--detach", "--port", "10532", "--responses-state", "memory"],
@@ -198,6 +265,32 @@ describe("upstream CLI delegation", () => {
 			expect(body.prompt_cache_key).toBe("posit-session");
 			expect(body.prompt_cache_options).toBeUndefined();
 			expect(JSON.stringify(body)).not.toContain("prompt_cache_breakpoint");
+		} finally {
+			restore();
+		}
+	});
+
+	test("rejects unresolved continuation state instead of dropping context", async () => {
+		const upstream = vi.fn(async () => new Response("upstream"));
+		vi.stubGlobal("fetch", upstream);
+		const restore = installUpstreamFetchAdapter();
+		try {
+			const response = await fetch(
+				"https://chatgpt.com/backend-api/codex/responses",
+				{
+					method: "POST",
+					body: JSON.stringify({
+						model: "gpt-5.6-sol",
+						previous_response_id: "missing-response",
+						input: [{ role: "user", content: "continue" }],
+					}),
+				},
+			);
+			expect(response.status).toBe(400);
+			expect(await response.json()).toMatchObject({
+				error: { code: "response_state_not_found" },
+			});
+			expect(upstream).not.toHaveBeenCalled();
 		} finally {
 			restore();
 		}

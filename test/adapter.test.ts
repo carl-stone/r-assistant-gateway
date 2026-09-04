@@ -5,13 +5,13 @@ import { adaptResponsesBody } from "../src/adapter.js";
 const fixture = async () =>
 	JSON.parse(
 		await readFile(
-			new URL("./fixtures/posit-0.9.8-responses.json", import.meta.url),
+			new URL("./fixtures/posit-1.3.0-responses.json", import.meta.url),
 			"utf8",
 		),
 	) as Record<string, unknown>;
 
 describe("adaptResponsesBody", () => {
-	test("translates a Posit 0.9.8 explicit-cache request without losing payloads", async () => {
+	test("translates a Posit 1.3.0 explicit-cache request without losing payloads", async () => {
 		const request = await fixture();
 		const original = structuredClone(request);
 		const adapted = adaptResponsesBody(request);
@@ -22,17 +22,11 @@ describe("adaptResponsesBody", () => {
 			"$.*",
 			"**.prompt_cache_breakpoint",
 			"prompt_cache_options",
-			"prompt_cache_retention",
-			"reasoning.*",
-			"stream_options.*",
-			"text.*",
-			"text.format.*",
 		]);
 		expect(adapted.body.prompt_cache_key).toBe("posit-session");
 		expect(adapted.body.reasoning).toEqual({
 			effort: "high",
 			summary: "detailed",
-			context: "posit",
 		});
 		expect(adapted.body.include).toEqual(["reasoning.encrypted_content"]);
 		expect(adapted.body.tools).toEqual(request.tools);
@@ -45,24 +39,61 @@ describe("adaptResponsesBody", () => {
 		expect(JSON.stringify(adapted.body)).not.toContain(
 			"prompt_cache_breakpoint",
 		);
+		expect(adapted.body).not.toHaveProperty("max_output_tokens");
+		expect(adapted.body).not.toHaveProperty("prompt_cache_options");
 	});
 
-	test("removes breakpoints recursively and collapses their paths", () => {
+	test("preserves Posit 1.3.0 structured function-call output", async () => {
+		const adapted = adaptResponsesBody(await fixture());
+		const input = adapted.body.input as Array<Record<string, unknown>>;
+		const output = input.find((item) => item.type === "function_call_output");
+		expect(output).toEqual({
+			type: "function_call_output",
+			call_id: "call_1",
+			output: [{ type: "input_text", text: "model summary" }],
+		});
+	});
+
+	test("removes markers only from Posit Responses content parts", () => {
 		const request = {
 			input: [
 				{
-					nested: [
-						{ prompt_cache_breakpoint: 1 },
-						{ prompt_cache_breakpoint: 2 },
+					role: "user",
+					content: [
+						{
+							type: "input_text",
+							text: "hello",
+							prompt_cache_breakpoint: { mode: "explicit" },
+							metadata: { prompt_cache_breakpoint: "user data" },
+						},
+					],
+				},
+				{
+					type: "function_call_output",
+					call_id: "call_1",
+					output: [
+						{
+							type: "input_text",
+							text: "result",
+							prompt_cache_breakpoint: { mode: "explicit" },
+						},
 					],
 				},
 			],
-			prompt_cache_breakpoint: 3,
 		};
 		const adapted = adaptResponsesBody(request);
-		expect(adapted.promptCacheBreakpointCount).toBe(3);
+		expect(adapted.promptCacheBreakpointCount).toBe(2);
 		expect(adapted.removedFieldPaths).toEqual(["**.prompt_cache_breakpoint"]);
-		expect(request.input[0]?.nested[0]?.prompt_cache_breakpoint).toBe(1);
+		expect(JSON.stringify(adapted.body)).toContain(
+			'"metadata":{"prompt_cache_breakpoint":"user data"}',
+		);
+		expect(
+			(
+				request.input[0] as (typeof request.input)[0] & {
+					content: Array<Record<string, unknown>>;
+				}
+			).content[0]?.prompt_cache_breakpoint,
+		).toEqual({ mode: "explicit" });
 	});
 
 	test("filters unsupported root and nested fields", () => {
@@ -92,20 +123,41 @@ describe("adaptResponsesBody", () => {
 		]);
 	});
 
-	test("handles deeply nested input without recursion and redacts property names", () => {
-		const secretKey = "SECRET_TOOL_RESULT_KEY";
-		const request: Record<string, unknown> = { input: {} };
-		let cursor = request.input as Record<string, unknown>;
+	test("preserves opaque schemas and deeply clones them without recursion", () => {
+		const schema = JSON.parse(
+			'{"type":"object","properties":{"prompt_cache_breakpoint":{"type":"string"},"__proto__":{"type":"number"}}}',
+		) as Record<string, unknown>;
+		let cursor = schema;
 		for (let depth = 0; depth < 20_000; depth += 1) {
 			const child: Record<string, unknown> = {};
 			cursor.next = child;
 			cursor = child;
 		}
-		cursor[secretKey] = { prompt_cache_breakpoint: true };
+		cursor.value = "end";
+		const request = {
+			input: [],
+			tools: [{ type: "function", name: "schema_test", parameters: schema }],
+		};
 
 		const adapted = adaptResponsesBody(request);
-		expect(adapted.promptCacheBreakpointCount).toBe(1);
-		expect(adapted.removedFieldPaths).toEqual(["**.prompt_cache_breakpoint"]);
-		expect(JSON.stringify(adapted.removedFieldPaths)).not.toContain(secretKey);
+		const tools = adapted.body.tools as Array<Record<string, unknown>>;
+		const adaptedSchema = tools[0]?.parameters as Record<string, unknown>;
+		const properties = adaptedSchema.properties as Record<string, unknown>;
+		expect(
+			(properties.prompt_cache_breakpoint as Record<string, unknown>).type,
+		).toBe("string");
+		expect(Object.hasOwn(properties, "__proto__")).toBe(true);
+		const protoProperty = Object.getOwnPropertyDescriptor(
+			properties,
+			"__proto__",
+		)?.value as Record<string, unknown>;
+		expect(protoProperty.type).toBe("number");
+		let adaptedCursor = adaptedSchema;
+		for (let depth = 0; depth < 20_000; depth += 1) {
+			adaptedCursor = adaptedCursor.next as Record<string, unknown>;
+		}
+		expect(adaptedCursor.value).toBe("end");
+		expect(adaptedSchema === schema).toBe(false);
+		expect(adapted.removedFieldPaths).toEqual([]);
 	});
 });

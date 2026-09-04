@@ -1,5 +1,12 @@
 import { execFile } from "node:child_process";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import {
+	mkdir,
+	mkdtemp,
+	readFile,
+	rm,
+	stat,
+	writeFile,
+} from "node:fs/promises";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import os from "node:os";
@@ -10,10 +17,18 @@ const execute = promisify(execFile);
 const root = await mkdtemp(path.join(os.tmpdir(), "posit-codex-cli-"));
 const runtimeDirectory = path.join(root, "runtime");
 const authFilePath = path.join(root, "auth.json");
+const positRoot = path.join(root, "posit-assistant");
 const cliPath = path.resolve("dist/cli.js");
+const packageVersion = (
+	JSON.parse(await readFile("package.json", "utf8")) as { version: string }
+).version;
+const positRequest = JSON.parse(
+	await readFile("test/fixtures/posit-1.3.0-responses.json", "utf8"),
+) as Record<string, unknown>;
 const env = {
 	...process.env,
 	POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR: runtimeDirectory,
+	POSIT_ASSISTANT_ROOT: positRoot,
 };
 const receivedBodies: Array<Record<string, unknown>> = [];
 let responseRequestCount = 0;
@@ -59,19 +74,26 @@ await new Promise<void>((resolve, reject) => {
 });
 const codexPort = (codexServer.address() as AddressInfo).port;
 
-await writeFile(
-	authFilePath,
-	JSON.stringify({
-		tokens: { access_token: "test-token", account_id: "test-account" },
-	}),
-);
+await mkdir(positRoot);
+await Promise.all([
+	writeFile(
+		authFilePath,
+		JSON.stringify({
+			tokens: { access_token: "test-token", account_id: "test-account" },
+		}),
+	),
+	writeFile(
+		path.join(positRoot, "package.json"),
+		JSON.stringify({ version: "1.3.0" }),
+	),
+]);
 
 const run = (args: string[]) =>
 	execute(process.execPath, [cliPath, ...args], { env, timeout: 15_000 });
 
 try {
 	const version = await run(["--version"]);
-	if (version.stdout.trim() !== "0.1.0") {
+	if (version.stdout.trim() !== packageVersion) {
 		throw new Error(`Unexpected version output: ${version.stdout}`);
 	}
 
@@ -93,27 +115,62 @@ try {
 	if (!gatewayUrl) {
 		throw new Error(`Could not find detached gateway URL: ${started.stdout}`);
 	}
+	if (
+		process.platform !== "win32" &&
+		((await stat(authFilePath)).mode & 0o777) !== 0o600
+	) {
+		throw new Error("Gateway did not restrict OAuth credential permissions.");
+	}
+	const doctor = JSON.parse((await run(["doctor"])).stdout) as {
+		compatibility: { supported: boolean };
+		localHealth: { reachable: boolean; url: string };
+	};
+	if (
+		!doctor.compatibility.supported ||
+		!doctor.localHealth.reachable ||
+		doctor.localHealth.url !== `${gatewayUrl.replace(/\/v1$/, "")}/health`
+	) {
+		throw new Error("Doctor did not recognize the active compatible gateway.");
+	}
+	const modelsResponse = await fetch(`${gatewayUrl}/models`, {
+		headers: { Authorization: "Bearer local-gateway" },
+	});
+	const models = (await modelsResponse.json()) as {
+		data?: Array<{ id?: string }>;
+	};
+	if (
+		!modelsResponse.ok ||
+		!models.data?.some((model) => model.id === "gpt-5.6-sol")
+	) {
+		throw new Error("Gateway did not support placeholder-key model discovery.");
+	}
+	const missingContinuation = await fetch(`${gatewayUrl}/responses`, {
+		method: "POST",
+		headers: {
+			Authorization: "Bearer local-gateway",
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			model: "gpt-5.6-sol",
+			previous_response_id: "missing-response",
+			input: [{ role: "user", content: "continue" }],
+		}),
+	});
+	const missingContinuationBody = (await missingContinuation.json()) as {
+		error?: { code?: string };
+	};
+	if (
+		missingContinuation.status !== 400 ||
+		missingContinuationBody.error?.code !== "response_state_not_found"
+	) {
+		throw new Error(
+			"Gateway silently discarded unresolved continuation state.",
+		);
+	}
 	const gatewayResponse = await fetch(`${gatewayUrl}/responses`, {
 		method: "POST",
 		headers: { "content-type": "application/json" },
-		body: JSON.stringify({
-			model: "gpt-5.6-sol",
-			input: [
-				{
-					role: "user",
-					content: [
-						{
-							type: "input_text",
-							text: "hello",
-							prompt_cache_breakpoint: { mode: "explicit" },
-						},
-					],
-				},
-			],
-			prompt_cache_key: "posit-session",
-			prompt_cache_options: { mode: "explicit" },
-			stream: true,
-		}),
+		body: JSON.stringify(positRequest),
 	});
 	if (!gatewayResponse.ok) {
 		throw new Error(
@@ -129,12 +186,21 @@ try {
 	if (!forwardedBody) {
 		throw new Error("Detached gateway did not forward a Responses request.");
 	}
-	if (
-		forwardedBody.prompt_cache_key !== "posit-session" ||
-		"prompt_cache_options" in forwardedBody ||
-		JSON.stringify(forwardedBody).includes("prompt_cache_breakpoint")
-	) {
-		throw new Error("Detached gateway did not apply the Posit adapter.");
+	const serializedForwardedBody = JSON.stringify(forwardedBody);
+	const adaptationFailures = [
+		forwardedBody.prompt_cache_key !== "posit-session" && "cache key changed",
+		"max_output_tokens" in forwardedBody && "output limit remained",
+		"prompt_cache_options" in forwardedBody && "cache options remained",
+		serializedForwardedBody.includes("prompt_cache_breakpoint") &&
+			"cache breakpoint remained",
+		!serializedForwardedBody.includes(
+			'"output":[{"type":"input_text","text":"model summary"}]',
+		) && "structured function output changed",
+	].filter(Boolean);
+	if (adaptationFailures.length > 0) {
+		throw new Error(
+			`Detached gateway did not adapt the Posit 1.3.0 request correctly: ${adaptationFailures.join(", ")}.`,
+		);
 	}
 
 	const continuationResponse = await fetch(`${gatewayUrl}/responses`, {
@@ -182,6 +248,17 @@ try {
 	const stopped = await run(["stop"]);
 	if (!stopped.stdout.includes("stopped")) {
 		throw new Error(`Unexpected stop output: ${stopped.stdout}`);
+	}
+	await writeFile(
+		path.join(runtimeDirectory, "runtime.json"),
+		JSON.stringify({ url: gatewayUrl }),
+	);
+	try {
+		await run(["doctor"]);
+		throw new Error("doctor unexpectedly succeeded after stop");
+	} catch (error) {
+		const result = error as { stdout?: string };
+		if (!result.stdout?.includes('"reachable": false')) throw error;
 	}
 
 	try {

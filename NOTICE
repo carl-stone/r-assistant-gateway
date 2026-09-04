@@ -4,3 +4,8 @@ Copyright 2026 Evan Zhou and OpenAI OAuth contributors
 https://github.com/EvanZhouDev/openai-oauth
 
 This product is licensed under the Apache License, Version 2.0.
+
+Process-local Responses continuation state modifications:
+Copyright 2026 Carl Stone
+
+https://github.com/EvanZhouDev/openai-oauth/pull/20

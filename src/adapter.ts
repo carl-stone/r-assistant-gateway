@@ -1,4 +1,4 @@
-export const CODEX_RESPONSES_ADAPTER_VERSION = 1;
+export const CODEX_RESPONSES_ADAPTER_VERSION = 2;
 
 export const CODEX_RESPONSES_REQUEST_FIELDS = [
 	"model",
@@ -39,11 +39,7 @@ export type ResponsesAdaptation = {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === "object" && value !== null && !Array.isArray(value);
 
-const removeBreakpoints = (
-	value: unknown,
-	removed: Set<string>,
-	counter: { value: number },
-): unknown => {
+const cloneRequest = (value: unknown): unknown => {
 	if (!Array.isArray(value) && !isRecord(value)) return value;
 
 	type Container = unknown[] | Record<string, unknown>;
@@ -70,23 +66,64 @@ const removeBreakpoints = (
 
 		if (!Array.isArray(current.source) && !Array.isArray(current.target)) {
 			for (const [key, item] of Object.entries(current.source)) {
-				if (key === "prompt_cache_breakpoint") {
-					counter.value += 1;
-					removed.add("**.prompt_cache_breakpoint");
-					continue;
-				}
+				const child =
+					Array.isArray(item) || isRecord(item)
+						? Array.isArray(item)
+							? []
+							: {}
+						: item;
+				Object.defineProperty(current.target, key, {
+					value: child,
+					writable: true,
+					enumerable: true,
+					configurable: true,
+				});
 				if (Array.isArray(item) || isRecord(item)) {
-					const child: Container = Array.isArray(item) ? [] : {};
-					current.target[key] = child;
-					pending.push({ source: item, target: child });
-				} else {
-					current.target[key] = item;
+					pending.push({ source: item, target: child as Container });
 				}
 			}
 		}
 	}
 
 	return root;
+};
+
+const removePositBreakpoints = (
+	body: Record<string, unknown>,
+	removed: Set<string>,
+	counter: { value: number },
+): Record<string, unknown> => {
+	const cloned = cloneRequest(body) as Record<string, unknown>;
+	if (!Array.isArray(cloned.input)) return cloned;
+
+	const cleanContentParts = (value: unknown): void => {
+		if (!Array.isArray(value)) return;
+		for (const part of value) {
+			if (isRecord(part) && Object.hasOwn(part, "prompt_cache_breakpoint")) {
+				delete part.prompt_cache_breakpoint;
+				counter.value += 1;
+				removed.add("**.prompt_cache_breakpoint");
+			}
+		}
+	};
+
+	for (const item of cloned.input) {
+		if (!isRecord(item)) continue;
+		if (
+			typeof item.role === "string" &&
+			["system", "developer", "user", "assistant"].includes(item.role)
+		) {
+			cleanContentParts(item.content);
+		}
+		if (
+			item.type === "function_call_output" ||
+			item.type === "custom_tool_call_output"
+		) {
+			cleanContentParts(item.output);
+		}
+	}
+
+	return cloned;
 };
 
 const filterRecord = (
@@ -112,11 +149,7 @@ export const adaptResponsesBody = (
 ): ResponsesAdaptation => {
 	const removed = new Set<string>();
 	const counter = { value: 0 };
-	const recursivelyCleaned = removeBreakpoints(
-		body,
-		removed,
-		counter,
-	) as Record<string, unknown>;
+	const recursivelyCleaned = removePositBreakpoints(body, removed, counter);
 	const adapted: Record<string, unknown> = {};
 
 	for (const [key, value] of Object.entries(recursivelyCleaned)) {
