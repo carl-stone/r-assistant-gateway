@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 2,
+  "captureEnvironment": {
+    "positAssistant": "1.3.0",
+    "rstudioProtocol": "11.0",
+    "rstudio": "2026.08.2+200",
+    "aiSdkOpenai": "3.0.88",
+    "provider": "openai",
+    "model": "gpt-5.6-luna",
+    "reasoningEffort": "medium"
+  },
+  "capture": {
+    "date": "2026-09-04",
+    "platform": "Linux x64",
+    "surface": "RStudio Posit Assistant",
+    "boundary": "POST /responses request body before gateway adaptation",
+    "headersRecorded": false,
+    "responsesRecorded": false,
+    "dataClassification": "synthetic"
+  },
+  "sanitization": [
+    "Replaced the local workspace path with /workspace/posit-golden-capture.",
+    "Replaced dates, the kernel release, the R session identifier, prompt-cache keys, and response/tool item IDs with deterministic values.",
+    "Replaced encrypted reasoning payloads with deterministic base64 opaque surrogates while retaining their fields and cross-request positions.",
+    "Replaced the full Posit Assistant and safety-classifier developer prompt text with versioned placeholders; request structure and cache markers remain.",
+    "Normalized temporary attachment names to the committed synthetic asset names."
+  ],
+  "developerPromptFingerprints": {
+    "algorithm": "sha256",
+    "normalization": "Replace the exact line beginning `The date is ` with `The date is <DATE>.` before hashing.",
+    "positAssistant": "1558970a45cb1361f8565bce26545bde7692999191f745384b14ad074af3cfc0",
+    "safetyClassifier": "398c7f1ba39546ae1a8767973f32002f14ab2fb311b7202188a7f036ae80cff4"
+  },
+  "excludedCaptures": [
+    {
+      "rawFile": "0010-07-file-mention-context.json",
+      "reason": "GUI automation lost whitespace while composing a file mention, so this was not a representative user request."
+    }
+  ],
+  "projectFiles": [
+    {
+      "file": "project/posit-golden-capture.Rproj",
+      "sha256": "776d7411a7beffcc1dc32e0e391a86a3aa5177d5625f1875ea497a716b924f9c"
+    },
+    {
+      "file": "project/setup.R",
+      "sha256": "629ea8d51f79e0ae3b381b2806959007095bbe682f2f3af3587f51b396b17a88"
+    },
+    {
+      "file": "project/analysis.R",
+      "sha256": "60da6b75c82be21d1f033a4bbedcc2b9ce1ae017a1b225771bf790a76a50d335"
+    },
+    {
+      "file": "project/data/synthetic.csv",
+      "sha256": "754e701a23c4374fb71c55fdaf5a08dcc4648482ff3ab91549422886376a1b0b"
+    },
+    {
+      "file": "project/generate-assets.R",
+      "sha256": "83755320f82c8143a27bad133ff5f1361214a861f10df8df3ee4606a79dd543c"
+    },
+    {
+      "file": "project/synthetic-plot.png",
+      "sha256": "4dfc47e4926dc9f82fa791faf312dd10d5ed2b09bb80c145d6b3bc61b7baa5d6"
+    },
+    {
+      "file": "project/synthetic-report.pdf",
+      "sha256": "f9cc2416db1ddd6a7e29da7592da2fd7d346af0d4ef0beb94d2282571626be25"
+    },
+    {
+      "file": "project/.posit/assistant/settings.json",
+      "sha256": "dad8dba86006e762204bdbbe5a14a3f59872a414de4f50b23209f9786ac67355"
+    }
+  ],
+  "requests": [
+    {
+      "file": "requests/0001-01-plain-chat.json",
+      "scenario": "plain-chat",
+      "kind": "main",
+      "stage": "initial",
+      "promptCacheBreakpoints": 3,
+      "features": [
+        "workspace-context",
+        "tools",
+        "reasoning",
+        "streaming"
+      ]
+    },
+    {
+      "file": "requests/0002-02-project-file-tool.json",
+      "scenario": "multi-turn-project-read",
+      "kind": "main",
+      "stage": "follow-up",
+      "promptCacheBreakpoints": 4,
+      "features": [
+        "multi-turn-history",
+        "encrypted-reasoning",
+        "project-file-tool"
+      ]
+    },
+    {
+      "file": "requests/0003-02-project-file-tool.json",
+      "scenario": "multi-turn-project-read",
+      "kind": "main",
+      "stage": "tool-result",
+      "promptCacheBreakpoints": 5,
+      "features": [
+        "function-call",
+        "structured-function-output",
+        "encrypted-reasoning"
+      ]
+    },
+    {
+      "file": "requests/0004-03-live-r-execute.json",
+      "scenario": "live-r-execute",
+      "kind": "main",
+      "stage": "initial",
+      "promptCacheBreakpoints": 3,
+      "features": [
+        "r-session-context",
+        "tools",
+        "reasoning"
+      ]
+    },
+    {
+      "file": "requests/0005-03-live-r-execute.json",
+      "scenario": "live-r-execute",
+      "kind": "safety-classifier",
+      "stage": "tool-approval",
+      "promptCacheBreakpoints": 2,
+      "features": [
+        "classifier",
+        "explicit-cache",
+        "streaming"
+      ]
+    },
+    {
+      "file": "requests/0006-03-live-r-execute.json",
+      "scenario": "live-r-execute",
+      "kind": "main",
+      "stage": "tool-result",
+      "promptCacheBreakpoints": 4,
+      "features": [
+        "function-call",
+        "structured-function-output",
+        "r-console-result"
+      ]
+    },
+    {
+      "file": "requests/0007-04-image-attachment.json",
+      "scenario": "image-attachment",
+      "kind": "main",
+      "stage": "initial",
+      "promptCacheBreakpoints": 3,
+      "features": [
+        "input-image",
+        "data-url",
+        "vision"
+      ]
+    },
+    {
+      "file": "requests/0008-05-pdf-attachment.json",
+      "scenario": "pdf-attachment",
+      "kind": "main",
+      "stage": "initial",
+      "promptCacheBreakpoints": 3,
+      "features": [
+        "input-file",
+        "data-url",
+        "filename"
+      ]
+    },
+    {
+      "file": "requests/0009-06-active-editor-selection.json",
+      "scenario": "open-editor-session-context",
+      "kind": "main",
+      "stage": "initial",
+      "promptCacheBreakpoints": 3,
+      "features": [
+        "open-file-context",
+        "r-session-context",
+        "variable-types"
+      ]
+    },
+    {
+      "file": "requests/0011-08-missing-file-tool-error.json",
+      "scenario": "missing-file-tool-error",
+      "kind": "main",
+      "stage": "initial",
+      "promptCacheBreakpoints": 3,
+      "features": [
+        "tool-error",
+        "project-file-tool"
+      ]
+    },
+    {
+      "file": "requests/0012-08-missing-file-tool-error.json",
+      "scenario": "missing-file-tool-error",
+      "kind": "main",
+      "stage": "tool-result",
+      "promptCacheBreakpoints": 4,
+      "features": [
+        "function-call",
+        "structured-function-output",
+        "error-output"
+      ]
+    }
+  ]
+}

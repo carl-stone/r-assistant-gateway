@@ -1,0 +1,12 @@
+{
+  "preferredModel": {
+    "id": "gpt-5.6-luna",
+    "provider": "openai",
+    "thinkingEffort": "medium",
+    "webSearch": false
+  },
+  "features": {
+    "cacheKeepalive": false,
+    "showTips": false
+  }
+}

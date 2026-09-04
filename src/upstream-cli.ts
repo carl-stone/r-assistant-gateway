@@ -1,3 +1,4 @@
+import { chmod } from "node:fs/promises";
 import { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
@@ -19,14 +20,18 @@ export const brandUpstreamCliText = (text: string): string => {
 	const help =
 		text.startsWith("Free OpenAI API access with your ChatGPT account.") &&
 		text.includes("\nUsage\n");
+	const updateGuidance = text.replace(
+		/A newer version of (?:@carl-stone\/)?openai-oauth is available: ([^\n]+)\.\nRun `npx (?:@carl-stone\/)?openai-oauth@latest` to use the newest version\./g,
+		"A newer pinned OAuth runtime is available: $1. Install a posit-codex-gateway release that supports it instead of upgrading the runtime directly.",
+	);
 	const branded = help
-		? text
+		? updateGuidance
 				.replaceAll(
 					"npx @carl-stone/openai-oauth@latest",
 					"npx posit-codex-gateway@latest",
 				)
 				.replaceAll("npx openai-oauth@latest", "npx posit-codex-gateway@latest")
-		: text;
+		: updateGuidance;
 	return branded
 		.replace(
 			"Free OpenAI API access with your ChatGPT account.",
@@ -83,7 +88,9 @@ const installCliOutputBranding = (): void => {
 	console.error = (...values) => error(...branded(values));
 };
 
-const defaultRuntimeDirectory = (): string => {
+export const resolveGatewayRuntimeDirectory = (): string => {
+	const override = process.env[GATEWAY_RUNTIME_DIRECTORY_VARIABLE];
+	if (override) return override;
 	if (process.platform === "darwin") {
 		return path.join(
 			os.homedir(),
@@ -134,6 +141,19 @@ const toBodyText = async (
 	init: Parameters<typeof fetch>[1],
 ): Promise<string | undefined> => {
 	if (typeof init?.body === "string") return init.body;
+	if (init?.body instanceof Blob) return init.body.text();
+	if (init?.body instanceof ArrayBuffer) {
+		return new TextDecoder().decode(init.body);
+	}
+	if (ArrayBuffer.isView(init?.body)) {
+		return new TextDecoder().decode(
+			new Uint8Array(
+				init.body.buffer,
+				init.body.byteOffset,
+				init.body.byteLength,
+			),
+		);
+	}
 	if (input instanceof Request && init?.body === undefined && input.body) {
 		return input.clone().text();
 	}
@@ -150,6 +170,7 @@ const adaptedFetchInput = async (
 			init: Parameters<typeof fetch>[1];
 			requestId: string;
 			model?: string | undefined;
+			unresolvedReplayState: boolean;
 	  }
 	| undefined
 > => {
@@ -172,6 +193,17 @@ const adaptedFetchInput = async (
 	if (!isJsonObject(parsed)) return undefined;
 
 	const adapted = adaptResponsesBody(parsed);
+	// The OAuth runtime expands known memory-state references before this fetch.
+	// Any reference still present here is unresolved and must not lose context.
+	const unresolvedReplayState =
+		typeof parsed.previous_response_id === "string" ||
+		(Array.isArray(parsed.input) &&
+			parsed.input.some(
+				(item) =>
+					isJsonObject(item) &&
+					item.type === "item_reference" &&
+					typeof item.id === "string",
+			));
 	const headers = new Headers(
 		init?.headers ?? (input instanceof Request ? input.headers : undefined),
 	);
@@ -199,23 +231,54 @@ const adaptedFetchInput = async (
 				init: undefined,
 				requestId,
 				model,
+				unresolvedReplayState,
 			}
-		: { input, init: nextInit, requestId, model };
+		: { input, init: nextInit, requestId, model, unresolvedReplayState };
 };
 
 export const installUpstreamFetchAdapter = (
 	logger?: DiagnosticLogger,
 ): (() => void) => {
 	const upstreamFetch = globalThis.fetch.bind(globalThis);
+	const safeLogger: DiagnosticLogger | undefined = logger
+		? (event) => {
+				try {
+					logger(event);
+				} catch {
+					// Diagnostics must never alter gateway traffic.
+				}
+			}
+		: undefined;
 	globalThis.fetch = async (input, init) => {
 		const startedAt = Date.now();
-		const adapted = await adaptedFetchInput(input, init, logger);
+		const adapted = await adaptedFetchInput(input, init, safeLogger);
+		if (adapted?.unresolvedReplayState) {
+			const response = Response.json(
+				{
+					error: {
+						message:
+							"Continuation state is unavailable. Start a new Posit Assistant conversation; the gateway may have restarted or evicted older state.",
+						type: "invalid_request_error",
+						code: "response_state_not_found",
+					},
+				},
+				{ status: 400 },
+			);
+			safeLogger?.({
+				type: "responses_response",
+				requestId: adapted.requestId,
+				model: adapted.model,
+				status: response.status,
+				durationMs: Date.now() - startedAt,
+			});
+			return response;
+		}
 		try {
 			const response = await upstreamFetch(
 				adapted?.input ?? input,
 				adapted?.init ?? init,
 			);
-			if (adapted && logger) {
+			if (adapted && safeLogger) {
 				const event = {
 					type: "responses_response" as const,
 					requestId: adapted.requestId,
@@ -228,16 +291,16 @@ export const installUpstreamFetchAdapter = (
 					void response
 						.clone()
 						.json()
-						.then((body) => logger({ ...event, usage: extractUsage(body) }))
-						.catch(() => logger(event));
+						.then((body) => safeLogger({ ...event, usage: extractUsage(body) }))
+						.catch(() => safeLogger(event));
 				} else {
-					logger(event);
+					safeLogger(event);
 				}
 			}
 			return response;
 		} catch (error) {
-			if (adapted && logger) {
-				logger({
+			if (adapted && safeLogger) {
+				safeLogger({
 					type: "responses_error",
 					requestId: adapted.requestId,
 					model: adapted.model,
@@ -259,11 +322,45 @@ const resolveUpstreamCliPath = (): string => {
 	return path.join(path.dirname(indexPath), "cli.js");
 };
 
+export const resolveOauthAuthFilePaths = (argv: string[]): string[] => {
+	const inlinePath = argv
+		.find((argument) => argument.startsWith("--oauth-file="))
+		?.slice("--oauth-file=".length);
+	const optionIndex = argv.indexOf("--oauth-file");
+	const explicitPath =
+		inlinePath || (optionIndex >= 0 ? argv[optionIndex + 1] : undefined);
+	if (explicitPath) return [explicitPath];
+	return [
+		...(process.env.CODEX_HOME
+			? [path.join(process.env.CODEX_HOME, "auth.json")]
+			: []),
+		path.join(os.homedir(), ".codex", "auth.json"),
+	].filter(
+		(candidate, index, candidates) => candidates.indexOf(candidate) === index,
+	);
+};
+
 export const runUpstreamCli = async (argv: string[]): Promise<void> => {
 	const prepared = prepareUpstreamCliArgv(argv);
+	const first = argv[0];
+	const usesOAuth =
+		first === undefined ||
+		first === "serve" ||
+		first === "login" ||
+		(first.startsWith("-") && first !== "--help" && first !== "-h");
+	if (usesOAuth && process.platform !== "win32") {
+		for (const oauthFilePath of resolveOauthAuthFilePaths(argv)) {
+			try {
+				await chmod(oauthFilePath, 0o600);
+				break;
+			} catch (error) {
+				if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+			}
+		}
+	}
 	process.env[UPSTREAM_RUNTIME_DIRECTORY_VARIABLE] =
 		process.env[GATEWAY_RUNTIME_DIRECTORY_VARIABLE] ??
-		defaultRuntimeDirectory();
+		resolveGatewayRuntimeDirectory();
 	if (prepared.diagnostics) {
 		process.env.POSIT_CODEX_GATEWAY_DIAGNOSTICS = "1";
 	}

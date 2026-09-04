@@ -1,0 +1,44 @@
+{
+  "model": "gpt-5.6-luna",
+  "input": [
+    {
+      "role": "developer",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<POSIT_ASSISTANT_SAFETY_CLASSIFIER_PROMPT_1_3_0>",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<workspace>\n<root_folders>\n<working_directory>/workspace/posit-golden-capture</working_directory>\n</root_folders>\n\n</workspace>\n\n--- Conversation ---\n"
+        },
+        {
+          "type": "input_text",
+          "text": "<user_message>Use executeCode exactly once to evaluate mean(capture_data$value) in the live R session. Do not read files or modify anything. Report the numeric result.</user_message>",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        },
+        {
+          "type": "input_text",
+          "text": "--- Tool call to evaluate ---\nexecuteCode({\"code\":\"mean(capture_data$value)\",\"intent\":\"Evaluate the requested mean\",\"dangerReason\":\"\",\"timeout\":30000})\n\nShould this tool call be allowed? Respond with JSON only."
+        }
+      ]
+    }
+  ],
+  "max_output_tokens": 256,
+  "prompt_cache_key": "golden-conversation-02:classifier",
+  "prompt_cache_options": {
+    "mode": "explicit",
+    "ttl": "30m"
+  },
+  "stream": true
+}

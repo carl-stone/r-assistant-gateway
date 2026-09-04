@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   contract:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -19,3 +20,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check:contract
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

@@ -1,0 +1,70 @@
+{
+  "model": "gpt-5.6-sol",
+  "input": [
+    {
+      "role": "developer",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "You are helping in RStudio.",
+          "prompt_cache_breakpoint": { "mode": "explicit" }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "Inspect this plot.",
+          "prompt_cache_breakpoint": { "mode": "explicit" }
+        },
+        {
+          "type": "input_image",
+          "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+        }
+      ]
+    },
+    {
+      "type": "function_call",
+      "call_id": "call_1",
+      "name": "read_r_object",
+      "arguments": "{\"name\":\"fit\"}"
+    },
+    {
+      "type": "function_call_output",
+      "call_id": "call_1",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "model summary",
+          "prompt_cache_breakpoint": { "mode": "explicit" }
+        }
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "name": "read_r_object",
+      "description": "Read an R object",
+      "parameters": {
+        "type": "object",
+        "properties": { "name": { "type": "string" } },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "tool_choice": "auto",
+  "max_output_tokens": 16384,
+  "reasoning": {
+    "effort": "high",
+    "summary": "detailed"
+  },
+  "store": false,
+  "stream": true,
+  "include": ["reasoning.encrypted_content"],
+  "prompt_cache_key": "posit-session",
+  "prompt_cache_options": { "mode": "explicit", "ttl": "30m" }
+}

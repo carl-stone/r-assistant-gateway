@@ -1,0 +1,603 @@
+{
+  "model": "gpt-5.6-luna",
+  "input": [
+    {
+      "role": "developer",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<POSIT_ASSISTANT_DEVELOPER_PROMPT_1_3_0>",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<workspace-context>\n\n<root_folders>\n<working_directory>/workspace/posit-golden-capture</working_directory>\n</root_folders>\n<host name=\"RStudio\" version=\"2026.08.2+200\" os=\"Linux 0.0.0-golden\" arch=\"x64\" />\n\n</workspace-context>"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "Use executeCode exactly once to evaluate mean(capture_data$value) in the live R session. Do not read files or modify anything. Report the numeric result.",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<environment_context>\n<date>\nToday's date is: Monday, January 15, 2024 at 12:00:00 PM UTC\n</date>\n\n<language_session description=\"Current active language session\" language=\"R\" version=\"4.6.1\" mode=\"console\" identifier=\"golden-r-session\">\n<variables description=\"Variables defined in the current session, in a pipe-delimited format, where each line is `name|type`.\">\ncapture_fit|lm\ncapture_data|data.frame\ncapture_token|character\n</variables>\n</language_session>\n</environment_context>"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<system-reminder>\nBatch tool calls aggressively: calls in one response run in order (a contiguous run of parallel-safe tools may run concurrently), so emit every call whose input doesn't depend on an earlier call's output together — e.g. several edits, or an edit then bash. Don't end your response just to narrate; narrate briefly before a batch and summarize after results return.\n</system-reminder>"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<system-reminder>\nDuring reasoning, mark focus shifts with topic labels on their own line:\n<topic>Present-tense thought phrase</topic>\nUse 3-7 words each; prefer thinking verbs (Considering, Weighing, Comparing). Aim for 2-5 labels per response. Only in reasoning, never in your response to the user.\n</system-reminder>",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        }
+      ]
+    },
+    {
+      "type": "reasoning",
+      "id": "rs_golden_004",
+      "encrypted_content": "iMeBPrrHbF9OgT2DbmnXMOxXGfiFgjFxs6Ec6l3geVDdal2JsxZ5/KDdomP5hECDT0HagWGv6JreOqgcQux6TG8IkWkVT7X1yerbAnG83wcUMemB10mDqFJKct7XdhAEDEZBBEvfQ0FTGQZwfBnXKONjZ11IP4VpJ13MEpAXA0Oe9zuMivCN+pt9ooijJ64UxqLBjuB1JQMCccnl9MBawrtINL0PDPx09IfwKAUrKsjD+xbAV4jb2INOmtB0pJLI1nDvOA0R9j+deUPBmTBkmxs4da3CYxZM5OK5X5KCgtPgK7xdeovQrzP74sDujeFnsDgJ96C61ytHa2pheEw2ZCtNXfDkrS83dh2v5iuuWYD6ZqxIr3NJWIXoarSf2KD2lZNFUtRG+88P5FhzXpieo/ObMNEgIVU+6xHhT8hf7b2Holzw1f3YOh4DLnFk6JFPjUWKynW3W5H7kfvN4sAO66s6Cd4zyvjIWL78tS4na8VKfB6W2MC1b/ybjoOvrzpuO2B/wBCVB7F6NZ5DM9CpViSytgIMzSvQmKUuEbKfPM6Q3MRPUlChKHlcpMUw1FFHZEjIPK03eQPFGhd3r8rW8ZL6YlU1z5fEkYKmhju9oQwTxQkBLUFYDcAOVgyUu+DkFWQeBnlkRZ/mdmEyT7ZHXq7N1xm6eWC/qt6ZgnTwpxPcfeGn5d4djXOH3kP6S9wAmTn0Nx8ybhwuOz/vSSuaxN3xc3dD1Ig9A2hagT/MK3ny93Wol3SU7apXWJbbLWX55I3YYgm6wcDSomk/kYpe0L1Pa4AA4ngxssIi4sFGBCoxaVcG7oy5ZdqqUcelENYxYgakowRrctefR86SiKDUB09GL74C7n1F1B+NMliIHq1sfCN+BPFGx5C0Wg4H84sbuNrS0jxmvsKLUDnZF0R/6O7XxPpFoWtPEGPJblK6AAGNQ/5E7xa5o3q3MpqNfiUCQLtL5hJe/xd4basKsJrWHFvNr9Gq9bv2lFEgOM3EAN7OvprQ58RR5Yv5EyKubfCIcKGELG8bkshtRau9Fb9JbmqO5gT3wpdiG9OpY56LBUSU8JQ7am5b5++ZRyvO6eD9oMhBJ7hGUokScbcy8jKnd9pr526eRG2kmZ+Gq6i4BXNekM4pKNsBm2+bny63YC63FImMrzx23BrMMJ1NThlEjldSJlaDe1gh3KVovjtrGfPQjTvGrSms+pvH+B0arWIfAVOz/oIYUZIdTI8ZCxluMDw4Mto7vS0O7eXhOjWNqy99geXLStg9H9hlIY23R330/N2IOeQuwl4W4pPuKSYW6veYk0nLQkVcJQiv0ag6LFVXuincdSDrK+zm/BtASxtbjF/vz3LKmCXGwPlIjnHZ3A==",
+      "summary": [
+        {
+          "type": "summary_text",
+          "text": "**Specifying single numeric execution output**"
+        }
+      ]
+    },
+    {
+      "type": "function_call",
+      "call_id": "call_golden_002",
+      "name": "executeCode",
+      "arguments": "{\"code\":\"mean(capture_data$value)\",\"intent\":\"Evaluate the requested mean\",\"dangerReason\":\"\",\"timeout\":30000}"
+    },
+    {
+      "type": "function_call_output",
+      "call_id": "call_golden_002",
+      "output": [
+        {
+          "type": "input_text",
+          "text": "[1] 5\n",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        }
+      ]
+    }
+  ],
+  "max_output_tokens": 128000,
+  "store": false,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "prompt_cache_key": "golden-conversation-02",
+  "prompt_cache_options": {
+    "mode": "explicit",
+    "ttl": "30m"
+  },
+  "reasoning": {
+    "effort": "medium",
+    "summary": "detailed"
+  },
+  "tools": [
+    {
+      "type": "function",
+      "name": "read",
+      "description": "Read the contents of a file. Use relative paths (e.g., src/main.ts) to refer to files under the <working_directory>, or absolute paths (e.g., /tmp/data.csv) for files elsewhere. Returns content with line numbers (cat -n format). By default reads up to 2000 lines. Lines longer than 2000 characters are truncated. Use offset and limit parameters to read specific line ranges. Supports images (PNG, JPG, GIF, WebP up to 5 MB).",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "File path. Relative paths (e.g., src/main.ts) resolve from <working_directory>. Use absolute paths (e.g., /tmp/file.txt) for files outside the working directory."
+          },
+          "offset": {
+            "description": "Line number to start reading from (1-indexed). Defaults to 1",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "limit": {
+            "description": "Maximum number of lines to read. Defaults to 2000 lines if not specified",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "file_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "write",
+      "description": "Write content to a file. Use relative paths (e.g., src/main.ts) to refer to files under the <working_directory>, or absolute paths (e.g., /tmp/data.csv) for files elsewhere. By default, fails if file already exists unless overwrite is true.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "File path. Relative paths (e.g., src/main.ts) resolve from <working_directory>. Use absolute paths (e.g., /tmp/file.txt) for files outside the working directory."
+          },
+          "content": {
+            "type": "string",
+            "description": "Content to write to the file"
+          },
+          "overwrite": {
+            "description": "If true, overwrite existing file. If false or not specified, fail if file exists",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "file_path",
+          "content"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "edit",
+      "description": "Edit a file by performing exact string replacement. Use relative paths (e.g., src/main.ts) to refer to files under the <working_directory>, or absolute paths (e.g., /tmp/data.csv) for files elsewhere. By default, fails if old_string appears more than once (to ensure unambiguous edits). Use replace_all=true to replace all occurrences. You may batch multiple edit calls to the same file in a single response when they touch separate parts of the file; they are applied in order. Write each old_string against the current file content. If edits overlap or one depends on another's result, issue them in separate responses.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "File path. Relative paths (e.g., src/main.ts) resolve from <working_directory>. Use absolute paths (e.g., /tmp/file.txt) for files outside the working directory."
+          },
+          "old_string": {
+            "type": "string",
+            "description": "The text to replace. Reproduce it exactly from the current file contents, including indentation."
+          },
+          "new_string": {
+            "type": "string",
+            "description": "The text to replace it with (must be different from old_string)"
+          },
+          "replace_all": {
+            "description": "If true, replace all occurrences. If false (default), fail if old_string appears more than once",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "file_path",
+          "old_string",
+          "new_string"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "ls",
+      "description": "List contents of a directory. Use relative paths (e.g., src) to refer to directories under the <working_directory>, or absolute paths (e.g., /tmp) for directories elsewhere. Defaults to the working directory. By default shows file/directory names. Use show_details=true to include sizes and modification times.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "path": {
+            "description": "Directory path. Relative paths (e.g., src) resolve from <working_directory>. Use absolute paths (e.g., /tmp) for directories outside the working directory. Defaults to the working directory.",
+            "type": "string"
+          },
+          "show_details": {
+            "description": "If true, show file sizes and modification times. Defaults to false",
+            "type": "boolean"
+          },
+          "limit": {
+            "description": "Maximum number of entries to return. Defaults to 1000.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "offset": {
+            "description": "Number of entries to skip before returning results. Defaults to 0.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "webfetch",
+      "description": "Fetch content from a URL. HTML pages are converted to markdown for easier reading. Returns raw content for JSON, plain text, and other formats. Use for retrieving web pages, API responses, or documentation. For GitHub issues, pull requests, or repository URLs, prefer the `gh` CLI via `bash` over this tool.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to fetch (HTTP or HTTPS)"
+          },
+          "timeout": {
+            "description": "Request timeout in milliseconds (default: 30000, max: 120000)",
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 120000
+          },
+          "raw": {
+            "description": "Return raw content without markdown conversion (default: false)",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "todoWrite",
+      "description": "Track progress on multi-step tasks. Use this to show users what you're working on and update status as you complete items.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "todos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "What needs to be done"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "in_progress",
+                    "completed"
+                  ],
+                  "description": "Current status"
+                }
+              },
+              "required": [
+                "content",
+                "status"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "todos"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "grep",
+      "description": "Search for text or regex patterns in workspace files. Returns matching lines with file paths and line numbers. Very long lines are truncated around the match. Automatically skips binary files and hidden directories.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Text or regex pattern to search for"
+          },
+          "path": {
+            "description": "Directory or file path to search in, relative to workspace (default: '.' for workspace root)",
+            "type": "string"
+          },
+          "caseSensitive": {
+            "description": "Perform case-sensitive search (default: false)",
+            "type": "boolean"
+          },
+          "maxResults": {
+            "description": "Maximum number of matches to return (default: 100)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "pattern"
+        ],
+        "description": "Parameters for searching text in files",
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "bash",
+      "description": "Execute a shell command. Starts in <working_directory>. For files outside <working_directory>, use absolute paths; avoid `cd` unless the user explicitly requests a directory change; never prepend `cd` to commands like git that already operate on the working tree. Returns stdout, stderr, and exit code. Use with caution — commands run with current user permissions. **Never** communicate with the user via code in this tool. When dedicated tools are available, prefer them over bash for file operations (`read`, `write`, `edit`, `ls`, `grep`). Multiple bash calls in the same response may run **concurrently** — ordering between them is not guaranteed. For commands that must run in order, put them in a single call chained with `&&` (or `;` if later commands should run even when an earlier one fails). Set `dangerReason` for irreversible or destructive commands, but not for routine operations like writing files or installing packages.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "Shell command to execute"
+          },
+          "intent": {
+            "description": "A short summary of the intent of the command.",
+            "type": "string"
+          },
+          "dangerReason": {
+            "description": "If this command could be destructive or dangerous (e.g., deleting files, dropping tables, killing processes), explain the risk here. When provided, the user will always be prompted for confirmation.",
+            "type": "string"
+          },
+          "dangerouslyDisableSandbox": {
+            "description": "Ignore this parameter unless you have been told that sandbox mode is enabled. Set to true to run this command outside the sandbox. Only use when a command fails due to sandbox restrictions (e.g., 'Operation not permitted' for file/network operations outside allowed paths). You MUST also provide a dangerReason explaining which sandbox restriction caused the failure.",
+            "type": "boolean"
+          },
+          "timeout": {
+            "description": "Timeout in milliseconds (default: 120000 / 2 minutes)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "command"
+        ],
+        "description": "Parameters for executing a shell command",
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "executeCode",
+      "description": "Execute code in RStudio's active R session. The code runs in the same environment as the RStudio console, with access to all loaded libraries and variables. Code execution output is streamed to the UI. Results include printed console output (stdout/stderr) and any generated plots. Use this tool to perform data analysis, statistical computations, create visualizations, and manipulate data files. Set `dangerReason` when the command could cause irreversible data loss or system changes. Do not set it for routine operations like writing files or installing packages.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The R code to execute in the active session."
+          },
+          "intent": {
+            "type": "string",
+            "description": "A short summary of the intent of the code."
+          },
+          "dangerReason": {
+            "description": "If this command could be destructive or dangerous (e.g., deleting files, dropping tables, killing processes), explain the risk here. When provided, the user will always be prompted for confirmation.",
+            "type": "string"
+          },
+          "timeout": {
+            "description": "Timeout in milliseconds for code execution (default: 30000). Increase for long-running computations.",
+            "type": "number"
+          }
+        },
+        "required": [
+          "code",
+          "intent"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "getConsoleContent",
+      "description": "Get recent content from the RStudio console. Useful for seeing command history, output, and error messages.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "limit": {
+            "description": "Maximum number of lines to retrieve (default 50).",
+            "type": "number"
+          },
+          "offset": {
+            "description": "Number of lines to skip (default 0).",
+            "type": "number"
+          },
+          "fromBottom": {
+            "description": "If true, read from the bottom of the console (default true).",
+            "type": "boolean"
+          },
+          "maxChars": {
+            "description": "Maximum total characters to return (default 8000).",
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "skill",
+      "description": "Load a skill's instructions into context. Skills provide domain-specific guidance for tasks like data analysis, visualization, or data cleaning.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "skill": {
+            "type": "string",
+            "description": "Name of the skill to load"
+          }
+        },
+        "required": [
+          "skill"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "launchSubagent",
+      "description": "Launch a nested AI agent to work on a specific task with custom context and tool access. The subagent runs independently with its own conversation history and returns its final result. Subagents do not inherit context from the current conversation; write precise task descriptions with necessary information (paths, goals, constraints, or background) so they can work autonomously. Use explore proactively for codebase and data investigation. Every subagent type accepts allowedTools, model, maxTurns, maxDepth, and thinkingEffort; canned types apply their built-in values as presets when these are omitted, except that allowedTools on a canned type can only narrow the type's built-in toolset.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Task description and instructions for the subagent to complete"
+          },
+          "intent": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A short (3-5 word) verb phrase summarizing the task, shown to the user in place of the full prompt. It must read correctly both as a label and after \"would like to launch a subagent to ...\", e.g. \"audit the auth flow\"."
+          },
+          "subagentType": {
+            "type": "string",
+            "enum": [
+              "general",
+              "explore"
+            ],
+            "description": "Which canned subagent type to launch.\n\n- `general`: General-purpose delegation. The caller may choose tools, model tier, thinking effort, turn budget, and nesting depth.\n- `explore`: Read-only codebase or data exploration. Use this proactively to find files, search for keywords, or answer open-ended questions. Put the desired breadth in the task and use absolute paths. Presets (overridable): model tier \"low\", 25 max turns, maxDepth 0, and a read-only toolset (listing, reading, and content-search tools) that allowedTools can only narrow."
+          },
+          "allowedTools": {
+            "description": "Exact names of tools available to the subagent, with no namespace prefix (for example, `read`, not `functions.read`). Unrecognized names are rejected. For general launches, omitting this gives the subagent all available tools subject to model and depth restrictions; canned types instead use their built-in toolset when omitted. On a canned subagent type this can only narrow the type's built-in toolset, never widen it; a narrowing that leaves no tools fails the launch.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "maxTurns": {
+            "description": "Maximum conversation turns before stopping (default: 25, minimum: 1)",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "maxDepth": {
+            "description": "How many additional nested subagent levels this subagent may open. 0 still allows this subagent but forbids further nested subagents. Defaults to 1 for general launches; canned types use their built-in preset when omitted (explore: 0). This can only lower the built-in nesting ceiling of 2 levels, never raise it — out-of-range values are silently clamped.",
+            "type": "number"
+          },
+          "model": {
+            "description": "Model tier for the subagent. \"default\" reuses the model launching this subagent; omission does the same for general launches, while canned types apply their built-in tier preset when omitted (explore: \"low\"). Use \"low\" for well-defined mechanical work such as searching files, gathering information, or summarizing content. Use \"medium\" for routine work that needs judgment. Use \"high\" for difficult reasoning when the extra cost and latency are justified. Every choice stays on the current provider. The server chooses the concrete serving model; provider-specific model names are not accepted.",
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "default"
+            ]
+          },
+          "thinkingEffort": {
+            "description": "Thinking effort level for the subagent's model (for example, \"low\", \"medium\", or \"high\"). This is independent of the model tier: the model tier chooses which model serves the subagent, while thinking effort controls how much that model reasons per step. Valid levels depend on the resolved model; an unsupported level fails the launch with an error listing the model's valid levels. If omitted, the tier's configured default applies (or \"medium\"), mapped to the nearest supported level when the resolved model lacks it.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task",
+          "intent",
+          "subagentType"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "EnterMode",
+      "description": "Enter a mode (e.g., Plan mode). Modes provide specialized behavior and prompts for specific workflows.\n\n## Plan\nEnter Plan mode to design an implementation approach before making changes. In Plan mode you should explore the codebase, ask clarifying questions, and write a step-by-step plan to a plan file for the user's approval.\n\nExit Plan mode with the ExitMode tool when ready to implement, the user will be shown the plan and asked for their confirmation.\n\n## Cleaning\nEnter Cleaning mode to rapidly audit, tidy, wrangle, or quality-check a dataset, surfacing cleaning decisions to the user. In Cleaning mode you inspect column names, variable types, distinct values, outliers, and potential data-entry errors, transform to tidy data, and drive every substantive cleaning decision through the AskUser tool so the user can approve, choose between options, or provide their own instruction.\n\nExit Cleaning mode with the ExitMode tool when the audit is complete.\n\n## Ask\nAsk mode is a read-only mode: the assistant explores and answers questions without changing anything — no workspace or home-directory writes, and no code execution.\n\nUser-entry only — you cannot enter this mode with the EnterMode tool. If the user wants a read-only session, suggest they type /ask or use the mode picker.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "Name of the mode to enter"
+          },
+          "title": {
+            "description": "Optional descriptive title for the planning session (e.g., 'refactor runtime services')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "ExitMode",
+      "description": "Exit the current mode (e.g., leave Plan mode). Returns to the default mode behavior.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "AskUser",
+      "description": "Surface a structured question to the user and wait for their answer. Use when the decision is enumerable (click beats typing) or when you have multiple decisions to batch — emit multiple AskUser tool calls in the same assistant message and they will be presented in parallel as a tab strip. For a single free-form clarifying question in normal chat, prefer asking inline in your response instead of calling this tool. Options render as buttons; a free-text box is always offered alongside options.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short headline for the question (≈ 3–6 words) that will be shown as the tab label and question heading. Prefer noun phrases describing the decision (e.g., `factor column casing`, `age outliers`, `rename ID columns`)."
+          },
+          "question": {
+            "type": "string",
+            "description": "The question or decision you want to surface to the user, situated in a sentence or two of plain-English explanation. When evidence is tabular (value counts, missingness summaries, distinct values), use a real GitHub-flavored markdown table rather than space-aligned text in a code block — tables render with borders and zebra striping and are much easier to scan. Keep tables to at most ~10 rows; if the underlying data has more, show a representative subset and note the truncation next to the table, e.g., `(showing top 10 of 23)`. Reserve fenced code blocks for actual code snippets, not tabular data."
+          },
+          "options": {
+            "description": "Optional enumerated choices. Each option's `label` is what the user clicks; the optional `description` is a short explanatory caption. Omit for open-ended questions that are best answered with free text.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "recommended": {
+                  "description": "Set to `true` on the option you'd highlight as the best default for the user to consider. This is purely a UI hint that makes the user's scan of the options faster — it is NEVER authorization to apply that option without an explicit user selection. Always wait for the user to choose (or cancel) before acting. Mark at most one option per question as recommended.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "title",
+          "question"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "tool_choice": "auto",
+  "stream": true
+}

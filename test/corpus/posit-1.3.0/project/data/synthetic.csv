@@ -1,0 +1,5 @@
+sample,value,group
+alpha,2,control
+beta,4,control
+gamma,6,treated
+delta,8,treated

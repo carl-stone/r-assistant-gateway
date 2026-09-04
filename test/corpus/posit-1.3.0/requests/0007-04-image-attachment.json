@@ -1,0 +1,581 @@
+{
+  "model": "gpt-5.6-luna",
+  "input": [
+    {
+      "role": "developer",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<POSIT_ASSISTANT_DEVELOPER_PROMPT_1_3_0>",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<workspace-context>\n\n<root_folders>\n<working_directory>/workspace/posit-golden-capture</working_directory>\n</root_folders>\n<host name=\"RStudio\" version=\"2026.08.2+200\" os=\"Linux 0.0.0-golden\" arch=\"x64\" />\n\n</workspace-context>"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<user-attached-file name=\"synthetic-plot.png\" type=\"image/png\" />"
+        },
+        {
+          "type": "input_image",
+          "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAFACAIAAADrqjgsAAAgAElEQVR4nO3dd0ATd/8H8G/YYcsGxcEUEUQBUQoqdQBKlVkcta6q9XGiqKilWlGsirW1ffrgqgNHFdRSRYsK1okCKlXrZCkiIktkh5D7/XFtfjGgDEnuAu/XX3ffu8t9ck3fHpe7TzgURREAAGAfOaYLAACApiGgAQBYCgENAMBSCGgAAJZCQAMAsBQCGgCApRDQAAAshYAGAGApBDQAAEshoAEAWAoBDQDAUghoAACWQkADALAUAhoAgKUQ0AAALIWABgBgKQQ0AABLIaABAFgKAQ0AwFIIaAAAlkJAAwCwFAIaAIClENAAACyFgIbWuX37dlBQkLm5uaamZv/+/Tdv3lxdXS26wvXr18eOHdu9e3ddXd1hw4bt2bNHuOjgwYMcDqd///6NX3b79u2cf8nJyfXo0WPMmDF3796ll+7bt4/TlBs3bhBCVqxYweFwDA0NKyoq6PWzsrLoFRoaGt71RubMmcPhcEJCQgghISEh9Pqurq7CFfz8/OjBoKAg0Q3nz59Pjz958qTlB+f9b6FZhYWFGRkZwukmX6olrwOyRYHpAkCW7N69e86cOfX19SoqKl26dMnIyMjIyDh16tS5c+eUlJQIIdHR0fPmzWtoaOByuVwu9+LFixcvXjx//vzBgwdb8vpqamqWlpYNDQ1Pnjw5ffp0UlJSWlqanZ0dvZTL5VpbW4uur6qqKpx+9erVxo0b161b9yFv8NatWzwej34vaWlpjVcQCARxcXH0dGxs7MqVK4WLmj04zb6Fd+HxeAEBAX///XdZWRkhREFBwcHBQbiUz+ffu3dPuAvoUCiAlsnNzeVyuYSQzZs319fXUxR1584dCwsLQkh0dDRFUTk5OWIrnD59WktLixASGxtLUdSBAwcIIQ4ODo1fPDo6mhDi5uZGz1ZXV3t5eRFCAgICKIrau3cvIcTJyanJwsLCwugPM5fLzcvLoygqMzOTHuHz+e96O19++SUhZNGiRRRFLVq0iBCioqJCCLlx4wZFUfn5+fQLEkICAwOFWyUnJxNC1NTUxN5Iswfn/W/hXW7cuLF27dq+ffsSQrS1tZtcZ/Xq1YSQ9evXt+qVQSbgEge01NatW2tqasaNGxcaGqqgoEAIsbOzO3jw4FdffaWjo0MI2bJlS01Nja+vr3AFb2/v8PBwQkhERESr9sXlcqOiogghx48fr62tbckmRkZGNTU1q1atau37EnJ0dCSEXL9+nRCSmppKCBkwYIDYOkeOHCGEhIaGamhoZGRkCP8laPbgtM3JkycjIyMbX0sRevDgQWRkpLOz8/Lly9u8F2AtBDS01J07dwghn3zyiejgwIEDIyIi6Ku09EVSPz8/0RX8/f0JIQ8ePKivr2/V7mxtbdXU1CiKys3NpUfu37/vLGLSpEmi63t6erq5ucXExNy+fbu1b41mbW2tra1NXxROTU3lcDgDBw4UXYHP5x87dowQMn78eG9vb0KI8HJHswenJW+hsYiIiJqaGvp0vkkrVqyor6/fsmWLvLx8q94syAQENLTU06dPCSGGhob07MaNG4VfT40cOZIQkp2dTQgxMTER3apbt26EkPr6enrzVqHPPV+8eEHPVldXp4u4f/++6MocDmfLli2EkCVLllAU1fr3R+Tk5FxcXIRn0FZWVrq6uqIrJCcnFxcXW1tb9+7dm/53KDY2ll7U7MFpyVtorZs3b8bHxw8dOtTd3f1DXgdYCwENLdWzZ0/ybxIRQgwMDBwcHPr06SNcoVevXoSQgoIC0a3oWXl5eTqpW4X+TkyY+GIXcBufKQ8cOHD8+PEXLlw4depUa/dFGzRoUHZ2dmFhYXp6uouLi9hS+voGHc2jR49WUlK6desW/c9SswenhW+hVfbt20cImTt37oe8CLAZAhpair5z4NChQ/TstGnTbt++TV9ipvXr148QcuLECdGt6FkbGxv6K7iWe/jwYWVlJYfDobOvhTZs2KCsrNzaS95CgwYNIoTExMSUl5fT00L19fX0e/n22285HI6WlhaPxyP/XuVo9uC0O/p+EkVFRU9PT8ntBZiFgIaWCgkJUVVVvXbt2uLFi+kv7tLS0oR3UBBClixZoqKi8ttvv3333Xd8Pp8Q8scff6xZs4YQ0trv7urq6kJDQwkhfn5+rUr2Hj16LFy4sLS0tFW7E3JxceFwOP/973/padFFZ8+eLSsrU1dXd/iXubk5+fcqR7MHp93dvXu3oKBg4MCBmpqaktsLMAsBDS3VrVu3H3/8UVFRcevWrZqamoaGhgMHDlRQULC0tKRXMDMz27x5M4fDWbJkiZaWlq6urre39+vXr4ODg8ePHy98nUePHol+USa6KCMjw9nZecCAAbq6ugkJCcrKynS+08S+YXN2dv7ll18a17ly5Uo9Pb22vccuXbpYWVnR98zZ29uLLqKvb8ycOfP2v65duyYnJ5eenp6Tk9PswWnVW2gJ+vKIlZVV2zYHmYAHVaAVpk+f3rdv3w0bNtAPcQQFBf3www+//vprSUkJvcK8efMcHBwiIyPv3LlTXV3t7u4+ZcqUGTNmiL5ITU1Nenq6cFb0LrrKysr09HQOh9O1a1c3N7dNmzYJn1Ih/37DJvpSYte7aVpaWmvWrJk3b17b3uOgQYMePXrk6OhI3y1Hq6uri4+PJ//elEIzMDBwc3O7dOlSXFzc0qVLmz04LX8LLUHfe9ejR4+2bQ4ygdO277sBAEDScIkDAIClENDQkdnZ2TXZV6jJhk1MkYkigRG4xAEAwFI4gwYAYCkENAAASyGgAQBYCgENAMBSCGgAAJZCQAMAsBQCGgCApRDQAAAshYAGAGApBDQAAEshoAEAWAoBDQDAUghoAACWQkADALAUAhoAgKUQ0AAALIWABgBgKQQ0AABLIaABAFhKgekCWqe4uPjChQtMVwEA8A85ObmxY8cqKipK4sVlLKCTk5Pj4+OHDh3KdCEAAIQQsn//fgcHB3Nzc0m8uIwFNCHko48+mjVrFtNVAAAQQkhqaqrkXhzXoAEAWAoBDQDwFooiNXUCpqsgRGqXOG7evFlWVjZ48GAlJaUdO3Y8fvx4/PjxgwcPls7eAQBagqLIzoSCHSdfEEKcrDUW+Hft01ONwXqkEdAzZ848fPhw165duVyuo6NjVlaWnZ2dj4/P77///tFHH0mhAACAlvj9WjGdzoSQ9EcVn294ePEHBzUVeabqkXhA5+bmHjt27MWLF5qamkuXLj169Ghubi6Hw+ndu/eOHTveE9B3795NSUkRG7x06ZKBgYGESwaATurynXKxkb9zqgbaaDJSDJFCQJeWlpqammpqahJC+vTp06tXLw6HQwgxMzM7e/bsezZUVlbu0qWL2ODr168rKiokVy0AdGYcTuORRkNSJPGAtrW1LS8vnzt3rrW19X//+9+6urq4uDh7e/stW7Z4e3u/Z0MrKysrKyuxwWvXrhUUFEiyXgDovDwctC/cfi06YtuLyWvQEr+LQ1lZ+dy5c1VVVUlJSVu2bElISAgPD7ezszMyMpo3b56k9w4A8H5PC2v5DRQ9PXqQ7gL/rvT0oD6ah8L7qCozeaubNL4ktLS03Lt3r3D2wYMHfD5fQUH2npEBgI7kXk7V3j9eKinKffVZdwX5f74J/NzT6HNPI34DpSDP5MUNGjMpiXQGAAZlZFYePF+oqiw/z69rTyOVxiuwIZ2JLD7qDQDQZqkP3uw+/dJQR2mBfzdTA2Wmy2kGAhoAOj4BRa7cLT94rtCyGzdiRi8DbYk0n2t3CGgA6Mj4DVRiWunRC0VO1hqbvzTTVJOl0JOlWgEAWq6eT51NLz12qXiQjcZPCy01VBl7ILDNENAA0NFU1wnirxSfSy8d6aTz8yJLFSVZ7QqHgAaAjqOqtiHuYlHSzTJvF93oJdZKCqy4GaPNENAA0BGUVfBj/3yV+rDCz11vT1hveTnZjmYaAhoAZNvLUt6Bc4UPnlZPGG4w08eE0eYZ7QwBDQCyKr+47nDSq+wXNeOHG4YGmzJdTvtDQAOA7Ml6UbMvsfB1Rf0XPib2Zkz2M5IoBDQAyJJHedX7/nhZW099Mca4Tw9VpsuRLAQ0AMgGYQONWZ+YNNlAo+NBQAMA28lWA412hIAGAJYSbaCxbkYvfRlpoNGOENAAwDoy3UCjHXXStw0A7CTaQOO/iyzVubLXQKMdIaABgBVEG2j8L8RSWVFWG2i0IwQ0ADCsgzXQaEcIaABgjGgDjb1hveU6RAONdoSABgAGdOAGGu0IAQ0AUtXhG2i0I4lfhr9z5864ceNu3bol6R0BAMtl5td8vSd346Fno5x1fg6xGmKvxXRFbCfxM+iysrLbt2/Pnz9/8ODBK1eu1NHRkfQeAYBtOlUDjXYkjUschoaGly9f3r59u5OT06effjp9+nQrK6tmt0pLS0tOThYbTE9P19TUlEyZAND+MjIrD50v5HamBhrtSErXoOXk5ObMmTN58uSffvpp5MiRenp6w4YN8/LyGjly5Ls2MTQ0dHR0FBtMTU0VCAQSLhYA2kHqgze7Tr800lGa38kaaLQjqX5JqK6uHhYWtnz58osXL545c+bkyZPvCeju3bt3795dbDAhIaGgoEDCZQJA24k20FjfKRtotCOJB7S8vDyXyxUd4XA4w4YNGzZsmKR3DQDShAYa7U7iR9DNze3SpUuS3gsAMAgNNCQE/8QBQNuhgYZEIaABoC3QQEMKENAA0Dp0A420RxW+bmigIVkIaABoKTTQkDIENAA0Dw00GIGABoD3ycyv2X+2sKyifpaPiZ2ZGtPldC4IaABomrCBxswxxjZooMEEBDQAiEMDDZZAQAPA/0MDDVZBQAMAGmiwFAIaoFNDAw02w38MgE6Kx6fOoYEGuyGgATodNNCQFQhogE4EDTRkCwIaoFMoreDHoYGGrEFAA3RwaKAhuxDQAB0WGmjIOgQ0QAeEBhodAwIaoEP5p4EGTzDTxwQNNGQdAhqgg0ADjY4HAQ0g84QNNBYEdOumjwYaHQcCGkA28PhU3qtaPS1FLZGnscur+Et+zupnrv7tzF46mmig0dFI4wmisrKyH3/8kRCSl5f3+eef29jYDB069PDhw1LYNUDHcOmv165zbwV/c3/44r/WH3gqEFD0uJaawrYFlvP9uyKdOySJB3Rtba2jo2NhYSEhZMyYMUpKSt99911QUNBXX311/PhxSe8doAMofVO/+Ocs4eyJy8WxF4uEs6rKeFC7w5L4JY779+/r6emtW7cuLy9PIBDs2rWLHreystq5c6e/v/+7Nrx8+XJCQoLY4NWrV3V1dSVYLgD73MupEhtJfVAR7GHASDEgTRIPaHNz86KioqqqKgMDg+rq6rq6OmVlZUJIQUGBpqbmeza0sLAYMWKE2OCTJ08kWCsAK6mqiPeZU1XBWXOnIPGA1tLSmjNnjpOT06RJk/r06ePk5BQUFPT48ePz58+fOXPmPRsaGxsbGxuLDSYkJBQUFEiyXgDWsTNTc7BQz8isFI6MGYS/IzsFafw7vGzZsv379xcXF3O53O7du2dlZfXr1+/27dv9+/eXwt4BZFFBCe9RXjU9rawot3ZaT6+BOoSQgTaam740H9TnfX99QochpdvsnJ2dnZ2dpbMvAJn2tLB27x8vS97w5/maCAdN9JTXzei1bkYvBgsD6cN90ABskZlfc+BcYWVNwxRPIzTQAIKABmADNNCAJiGgAZgkbKAxe6xJD0M00IC3IKABmEE30OhpqLwk2NSwixLT5QAbIaABpEpAkSt3yw+eK7Tsxl0/o5e+Nh7RhndCQANICb+BSkwrPX6p2MVGY/OXZppq+L8PmoGPCIDE8fjUufTSYxeLBvXR/GG+hTpX/MlAgCYhoAEkqLpOEH+l+Fx66Ugnnf8ttlJWxCPa0AoIaACJqKptiLtYlHSzzNddf0eotYI8fkwbWg0BDdDOSiv4cX++SntU4eumtzest5wcohnaqIk/uCiK+u6775ycnLy8vP7++++1a9fyeDzpVwYgcwpKeFFH8r7ald27h9qOJdZjBukineFDNBHQy5cvj4+PX7JkSX5+vpGR0dWrV+fOnSv9ygBkSH5xXdSRvIj9uQNtNH8OsRpir8VBMsMHa+ISR1xc3F9//aWhoREZGamrq3v48OHevXvv3LlT+sUBsB8aaIDkNBHQFEW9efNGQ0ODnq2treVyudKtCkAGPHxWvT8RDTRAgpoI6JCQkCFDhnzxxRcVFRWHDh3atGnT7NmzpV8ZAGuhgQZIRxMBvWDBAmtr64MHD/bq1ev3339ftWpVYGCg9CsDYBuKIpfvlh84V4gGGiAdTd9m5+np6enpKeVSAFiLbqBx4FyhFRpogBQ1EdDh4eGNByMiIiRfDADriDbQiEIDDZCuJj5t6urq9ARFUQ8fPjx58qSPj490qwJgHo9PnUopOXG5yN1OCw00gBFNBPTy5ctFZ/Py8vDrrtCpiDbQ2LXUGg00gCnN/72mo6MjL49zB+gUyqv4R5JfXblbjgYawAbNXIMWCATnz58fMmSIFEsCYAAaaAALNfG3m4oIVVXVzz77bPv27W3ewfPnzw8cOEBP5+bmTpw4sXfv3h9//PFvv/3W5tcEaEf/NNDYnYMGGsA2TZxBr1q1qh13kJWV9cMPP3z22Wd8Pt/Ly8vZ2TkqKio3Nzc0NFRZWdnb27sd9wXQKs+L6vYnvnxaWDdppGFosCnT5QCIeyugQ0JC3rXe1q1bP3BP9+/fV1VVjYmJoWfNzMwOHDjwnoA+f/58bGys2GBKSoqJickHVgLw5HnNwfNooAFs91ZA9+zZU3J7UldXV1D4/93V1tYKBIL3rO/o6NilSxexwYqKivr6eonUB53DnazKvYmFhKJmfWLSuzsaaACrvRXQCxcubHKlZ8+etXkHcnJyd+7c6d+/v5mZ2ZMnTw4fPjxhwoTk5ORly5atX7/+PRt26dLF0dFRbNDQ0LCgoKDNxUBnJmygsTCgKxpogExo4hp0TU3Nb7/99ubNG3qWx+N9++23+fn5bduBu7t7WVlZdnZ2dna2m5ubjo4OIeTy5cuLFi0KDg5uc90ALYQGGiC7mgjoyZMn5+TkqKiovHnzZuDAgfHx8R/4taGqqmrfvn379u0rHFm9evWHvCBAS4g20Ij8opeeFhpogIxp4ja7c+fOJSUlHTx4UF9ff/fu3VevXr169ar0KwNoM34DlXC9ZObmRw+fVkV9aRYabIp0BlnUxBk0l8ttaGjo2bPn48eP6+rqrK2t09LSpF8ZQBuggQZ0JE0E9NixY0eMGPHnn386OTktWLDA0NBQ+OsqAKyFBhrQ8bz1If7tt9/q6uq2bdu2aNEiOTm5HTt2EELu378vvHkZgIXKq/g7Tr748rvHykpyO5daTxhugHSGjuGtM+jQ0NApU6aMGzcuODhYWVlZQ0PjQx7yBpC0txpoLLfGI9rQwbx1opGZmXn58mVzc/NVq1YZGhpOnz49MTGRz+czVRzAu6CBBnQG4n8J2tvbr169OiMj4+bNm7a2thERESYmJrNmzWKkOIDGnhfVRR54umZv7kAbzZ8XWQ6x1+IgmaGDemc/aDMzszFjxlRXV+fl5cXHx9PXowEYJGygMdXLqG8vNNCAjq+JgM7MzDx69OjRo0dzc3P9/Px27tw5fPhw6VcGIPRXVuX+xEIKDTSgk3kroDdt2nTkyJEHDx6MGTPm66+/HjNmjLKyMlOVARCRBhoL0EADOp+3AvrChQsLFy708/PDjc/ArH8aaJx92dNIBQ00oNN6K6DPnDnDVB0AtLcaaMw0wyPa0Jk1/6OxANLBb6AS00qPXyp2sdGImmOuqYqntKGzQ0AD80QbaGxbYKGmgmgGIAQBDcxCAw2A90BAAzPKq/hHkl9duffG101v51JreTwHCNAIAhqkDQ00AFoIAQ3SU1DCO3i+MLugdvzHBjN9TPCINsD7IaBBGp4X1e1PfPm0sG7SSMPQYFOmywGQDQhokCw00ABoMwQ0SAoaaAB8IAQ0fJB6PnU3p6qeL+jbS030/uWtsc+r6xpCgrp100c7F4A2YiCgL126tGXLlvj4eOnvGtrXixJe+O6cv7Iq6dntS6wcrf7p4hIS1I25ugA6CGkE9PTp0wsKCoSzpaWlOTk53t7e9vb2GzdulEIBICHfxz0XpjMhZPaWx2nRjrg3A6C9SCOgx44d+8UXX/j6+o4cOZIQcv/+/ZMnT06dOtXAwOA9WyUkJOzbt09sMCMjo0ePHhKsFVoj+VaZ2EhhGc9IB53nANqHNALa19fXxcVl6tSpKSkp3377rZGR0a1bt4KDg9+/lYeHh42NjdjgunXrqqqqJFYptI6TtUb6owrREW11fKsB0G6k9L+TsbHxH3/88f3337u6uk6ePLklm6iqqpqZmYkNamlpVVdXS6BAaItRzjqiAR0wRF9FCc00ANqN9M53OBxOSEjIiBEjpk2bZm1tLbX9Qjsqr+In33rt565Hz/q762lw5U/fKOE3UIP7aH7q8b5rVgDQWtL+g9TOzi49PV3KO4UPV1xef+Bc4d+5VZNGGIqOj3TqMtKpC1NVAXRsuGIIzRBtoLEwoBtu0gCQGgQ0vBMaaAAwCwENTUADDQA2QEDDW+5kVe5DAw0AdkBAwz8yMisPnS/kKssvCOjaw1CF6XIAAAHd6VEUuXy3/MDZlz2NVJYEmxp2wXOAAGyBgO68BBS5crf8wLlCq27cyJlmelqKTFcEAG9BQHdG/AYqMa30+KViFxuNqDnmmqryzW8DAFKHgO5ceHzqVErJictF7nZa2xZYiHZwBgC2QUB3FtV1gvgrxefSS0c66exaaq2siKYZAGyHgO74yqv4R5JfXbn3xtdNb+dSa3k5PAsIIBsQ0B1ZaQU/7s9XaY8qfN309i63lkM0A8gUBHTHJNpAY6aPCRpoAMgiBHRHgwYaAB0GArrjQAMNgA4GAd0R/JVVuR8NNAA6HAS0bEMDDYAODAEtk9BAA6AzQEDLGDTQAOg8ENAyAw00ADobBLQMQAMNgM4JAc1qaKAB0JlJI6DLy8v37NnD4/EmTZr0/PnzqKio8vLyiRMnTp06VQp7l1FooAEAEg9ogUDg4eHB5XLt7OzGjRtXW1s7ceJETU3NtWvXqqurBwYGSroAmYMGGgBAk3hAP3jw4PXr1zdv3uRwOIsXLy4tLV25ciUhRFtbOy4u7j0BHR8ff/DgQbHBjIyM7t27S7Zi5qCBBgCIksYZtLa2NofDIYR4eXk1NDTQ44qKzdwfNnr06CFDhogNrlq1qrS0VBJ1MgsNNACgMYkHtI2NDY/HmzJlyuzZs0eNGkUIEQgEiYmJkZGRISEh79lQUVGxS5cuYoPKysoSrJUJdAONiuqGad5ooAEAb5F4QCsoKPz5558//fRTVlaWq6srIaS2tvbrr7+eOXNmJ/+SEA00AOD9pHEXh56e3po1a4SzqqqqaWlpUtgvawkbaCwM6NodDTQA4B1wH7T0oIEGALQKAloa0EADANoAAS1Z9XzqbHrpsUvFg9BAAwBaCQEtKaINNH5EAw0AaD0EdPurrm2Iv1qCBhoA8IEQ0O3pdSX/6AU00ACA9oGAbh9ooAEA7Q4B/aFelPAOoYEGAEgAArrt0EADACQKAd0WaKABAFKAgG4dNNAAAKlBQLcUGmgAgJQhoJsh2kAjNNjUAA00AEBaENDvhAYaAMAsBHQT0EADANgAAf0WNNAAAPZAQP9DtIHG7qXWSmigAQBMQ0CjgQYAsFSnDujSN/VxF4vQQAMA2KmTBjQaaAAA+3W6gBY20Jgx2ggNNACAzaQU0BRFvXnzRktLSzjC5/Pr6urU1CTVyCL1YUVuQU1PY66ztYbwBPl+btW+xMKpXkY2PfCUNgCwnTTuVYiNjdXT09PV1XVxccnMzKQHk5KSfHx8JLE7AUVW7Mz+z9bHm37N+8/Wx2E7sgXUP4v69FTbONsM6QwAMkHiAf369etp06ZFR0eXl5d//vnnnp6excXFEt3jhdtl59LLhLNJt8rOp5dKdI8AAJIg8UscT548sbW1DQoKIoTMnTs3KysrLCxs165dzW547Nix6OhoscHMzExra+tm9vi8RmzkUV7NKOfWFA0AwAISD2hzc/Ps7OyCggJjY2NCyNq1a/v373/06FHR69FNCggICAgIEBs8evRosyfgxrri/YxM9NDhCABkj8Qvcejo6MyePdvOzu7LL78khKirq8fGxoaEhCxfvlxCexzppONgoS6cdbBQ9x6oI6F9AQBIjjTu4li3bl1gYODTp0/pWQcHh7t378bGxlIU9f4N20ZVWW7rXIvYP1/lvKztaaTy6TADVbTUAAAZJKXb7BwcHBwcHISz9Gm15HanoSo/fbSx5F4fAEAK0BIIAIClENAAACwlY496a2lpRUZGnjhxoiUrp6amKijI2Busra1VUlKSk5OlfzgbGhoaGhqUlGTsVpnq6mpVVRl7ZKmmpkZFRYUjU71j6uvrCSGKirL0g0QURcnLy4telX2PvLw8LpcrwVI6qmHDhjFdQqstXLgwIyOD6Spa5+zZs+vWrWO6ilaTxY+Hv79/SUkJ01W0zu7du/ft28d0Fa1TWFj46aefMl0FRVGULJ2pAQB0KghoAACWQkADALAUAhoAgKUQ0AAALNWRA1rm7rEjhMjJycnWPXaEEHl5eXl52XuYHh8P6ZDFjwd7jjOHkkxDDDaoqKjQ0NBguorWqaysVFNTk60bXRsaGurq6mTunmJZ/HjIYs11dXUcDkfmbpNnyaHuyAENACDTWHEaDwAAjSGgAQBYCgENAMBSCGgAAJZCQAMAsBQCGgCApRDQAAAsJXsPU73Hq1evtLW1G98ST1HUqVOncnJyPD09ra2tGantXSorK/l8vra2ttj4lStXkpKS6GklJaUVK1ZIvbSmPXz4MDk5WV5e3t/fX19fX2zp06dPT506ZakMAiMAAA6USURBVGBg4Ofnx55H9Xg83unTpzMzMx0cHEaMGCG29MCBA1lZWfS0lZXVhAkTpF5gEwQCwe+///7kyRMbG5sxY8Y0fnYpLS3t6tWrAwYMGDJkCCMVNiklJeXatWv6+vqBgYFizy49f/589+7dwtlZs2YZG7Poh0MFAkFpaamenp7YeEVFxYkTJ3g8np+fn66urpSr6jhn0BRF+fj45OTkNF40a9asjRs3vnz50sPDIyUlRfq1vceaNWuOHDnSePzo0aPXr1+v/Jf0C2vSH3/84e7unpubm5CQYGtrm5+fL7r077//dnFxefr06a5duwIDA5kqUkxDQ4O3t/f3339fVFQ0bdq0sLAwsRU2bdqUn59PH+eamhpGimxs6tSpGzdufPPmzbJlyxr/wnJMTExwcHBJScns2bO///57RipsbPfu3ePHj3/9+nVMTIyLiwuPxxNdmpqaGhsbK/xINzQ0MFVnk9atWzd58mSxwbq6usGDB589e/bmzZtOTk6vX7+WdlnM/l5Ae9mxYwd9HvHw4UOxRU+fPtXW1q6oqKAoavv27ePGjWOiwCYkJycHBwfLy8tHR0c3Xjp69OjExETpV/V+7u7uv/zyCz09evTo1atXiy6dMWPGN998Q1EUj8fr3r377du3pV9hY0lJSRYWFjwej6Ko1NRURUXFuro60RXU1dVramoYqq5pZWVlSkpKVVVVFEXdvXtXWVmZz+cLlwoEAktLy4sXL1IU9ejRIwMDA7F3xJR+/fqdO3eOoig+n29gYHD58mXRpZs2bVqxYgVDpTXj+vXrGhoaXl5eYuMxMTEeHh709IQJE7Zu3SrlwjrIGbSFhcWCBQsaXygghKSkpAwaNEhdXZ0QMmrUqCtXrki9uqbp6+sHBQUNGjSoyaXZ2dmlpaVRUVHHjx8XCARSru1dXF1dR40aRU9bWlqKFXb16lVPT09CiKKiooeHB0sOtYqKyuLFi+nfxDM3N1dQUODz+cKlhYWFGhoa58+f37Jly9WrV5kr8y3y8vInT56kLxE0NDTo6OiI9ht69erVixcv3NzcCCFWVlZcLvfx48eM1Spiw4YNrq6uhJD6+noFBQUDAwPRpdnZ2UpKSt9///2ePXsYOBV9t8rKytmzZy9fvrzxIuFHmjCUHh0koD08PAICAlRUVBovevnypaGhIT1tZGRUUlIi9pcXU/r27RsQEGBqatp4EUVROTk5P//8c01NzebNmz/55BPpl9ekb7/9tmvXroSQmzdv/vrrr/7+/qJLxQ51QUEBAyU24urqOmfOHEJIQ0NDaGioj4+P6LXR7OzsgoKCI0eOVFRUjB8/ftOmTcxV+v80NDRGjRpVUlLi5eU1fPjwffv2iS59+fKlnp6esN0aew61t7e3qqrqzJkzbWxsZsyYYWVlJbo0Ozs7Jibm9evXiYmJ9vb2JSUlTNUpZsGCBfPnz7ewsGi8iPGPNFu+xpEciqKEX7BQFEUIYdvFr8YaGhpOnz49ZMgQBQWFRYsW6evrX7t2jT43YRyfz9+wYcO2bdtiYmLEfvZY7FCLnqgy7q+//vriiy+MjY3FrvhbWFikpqY6OzsTQlxdXX19fRcvXsySrzc1NDSWLl164sSJJUuW3Lx5U/jD2KLHmbDvUH/55ZfW1tbbtm0LDg62tbUVjq9du9bCwoL+ns3V1XX79u0rV65krsx/HDt2rKSkZMaMGU1+FcT4R7qDnEG/h6GhYVFRET1dVFSkpaUlwd9IbycKCgoff/wxHRMaGhqOjo7Pnj1juihCCCkvL3d3d7958+bt27e9vLzEloodavZ8Rx8TE+Pp6blw4cL4+Hix//r6+vp0OhNChgwZwuPxiouLmajxLfn5+ampqUpKSsOHD//xxx/LysrS09OFSw0NDYuLi6l/+1Cy5FDX1taeOXOGEOLo6BgaGuru7v7777+LruDi4iK8C8LDw4MlH+nFixd37dr1m2++iYuLy8zMjIiIEF3K+Ee64we0m5vb9evXa2trCSFJSUlDhw5luqLmpaen29raVldXE0KqqqoyMjJEz0QYtGjRov79+584caJbt26Nlw4dOpS+NbChoeHPP/9kyaHOzMxctGjR5cuXP/vss8Y3q23btm3ixIn0dEpKira2tvBPWgZlZWVNmjSJjuDKysqSkhI1NTXhUmNjY2Nj49TUVEJITk5ORUVFnz59GKv1X3Jycv7+/nl5efTss2fPRGvm8/nm5ua3bt2iZ69cucKSj/Ty5cvNzc3V1dWVlZXl5eVFayYiH2nCVHpI+UtJiTIyMhK9i8Pb2zstLY2iqFmzZnl5eW3cuLF79+4pKSnMFdiE8ePHi97FERYWtmvXLoFA4O3t7erqun79+qFDh06fPp3BCkWpqanRd6rRTp48SVHU4cOH58+fT1HU33//bWpqGhkZ6e/v7+/vz3Sx/9i0aZOlpWWYCPqeDfrjkZ+fb2ZmFhwcHBERYWlpuWfPHqbrpSiK4vP5np6egwcPDg8P79+/v6+vLz1Ofzwoijp48KCNjc2WLVv69+//ww8/MFrs/1u3bp2ZmVlYWJiPj4+ZmVlpaSkl8vGIjIzs1atXeHj4559/bm9vT9+jwh6//vqr8C6O+/fvjxgxgsfjVVdXOzg4zJ8/f9myZVZWViUlJVKuSn7NmjXS/jdBYjgcjqurq/AroNzcXGdnZx0dnTFjxmhqalZVVa1Zs0bssinjOBxOnz59TExM6NnCwsJu3bqZmZlNmDDB0NCwvLw8ICBg8eLFzBZJo+/l0tbWVvhXjx49LCwsysvLFRQUBgwYoK+v7+vr++zZMxcXl6+++oolP3RUWVmpo6OjIMLd3V1BQYH+ePTo0WPKlCkcDofP5y9btqzxdRtGyMnJBQUFGRsbV1ZWBgYGhoeH0+f+wo+HnZ2dk5NTfn7+1KlTg4ODma73H0OGDBkwYEB5ebmTk9O2bdu0tLQIIcKPh7u7+6BBg4qLi/v16/fdd9+x7Uojh8MxMDCwt7cnhNBXuoYOHaqkpDRhwoQ3b95oa2tv3rxZ+g+q4BdVAABYquNfgwYAkFEIaAAAlkJAAwCwFAIaAIClENAAACyFgAYAYCkENAAASyGgAQBYCgENAMBSCGgAAJZCQAMAsBQCGgCApRDQAAAshYAGAGApBDQAAEshoAEAWAoBDQDAUghoAACWQkADewkEgr17906fPj0gICAiIqKoqIge/+yzz168eCG1Mq5du3b16lVCyPLly69fvy61/QIoMF0AQNN4PJ6XlxePx5s1a5a2tnZiYqK9vf3JkyednJxu3LhRU1MjtUouXLjA5/M/+ugjW1vbLl26SG2/AAhoYKmoqCiKoi5evEj/OvjYsWOtra1nzZqVnp5OCHn8+HFkZGRVVdX06dNHjRpFCCkoKNiwYUNmZqatre1XX31F/6T0kSNH4uLiunXrNm3aNPoHm8PDwz09PQ8dOmRiYvLkyZN9+/bRuxs3blxUVJSpqenWrVtTUlJUVFRmzpw5cuTICxcu7N69m6IoExOTnJwcKysrQghFUdu3b09MTNTX11+yZIm1tTUhZM2aNS4uLocOHaqtrQ0KCvr0008ZOnLQgVAArGRjY5OYmCg6Ul9fr6Ojc+/ePQsLCxsbm5MnT+7evVtTU/PGjRsURX388cf/+c9/kpKSRo0aNX/+fIqifvnll759+549e3bnzp2mpqZ5eXkURfn6+jo6Ov7yyy/Pnj1TU1N7/vw5RVHp6endunUTCARLly51d3c/e/bs//73P2Vl5fLy8rq6uhUrVixbtqyqqsrHx+fUqVMURUVERDg7O58/f37r1q16enrFxcUURQUGBpqamsbHx584cUJVVVX6Rww6HgQ0sBGfz1dQUKAjVZSrq2tsbKyFhUVMTAw9EhYWNmvWLIqi+vbtGxcXR1HUq1ev7t27R1GUra3t8ePH6dX8/Py+/vpriqJ8fX3pCXp6x44dFEWFh4eHhoZSFJWcnJydnU0XYGBg8PDhQ4qi1q1bt2bNGoqihAFtZGSUkZFBv8inn366bds2iqICAwNnz55ND37yySeSOTDQueBLQmAjeXl5TU3N8vJysfHy8nI9PT1CSL9+/egRJyennJwcQsjq1atnzpxpb28fFRWlq6tLUdSTJ0+ioqI8PDw8PDwyMjLy8/PpTXr37k1P+Pn5nTp1ihASHx8/fvx4QoiDg0N0dPTw4cOtrKzevHnTZG3V1dWvXr3q27cvPduvX7+srCx6+qOPPqIn1NTU2udAQOeGa9DAUk5OTmfOnLG1tRWOZGdnZ2VlDRgwgBAiTM+KigpdXV1CSGBg4Lhx465evRodHT1x4sTk5GQul7t//35tbW16TWVlZXpCSUmJnvDx8Zk/f/6DBw9qamocHR0JIX5+fjY2NtHR0fRVlCYLU1FRUVBQqKqq0tTUJIRUVlZqaGiIvTJAu8AZNLDU+vXrIyMjk5KS6NmCgoLJkyeHh4fTsbh//35CCJ/P37Nnj4eHB4/H09HRKSoqGjZs2NKlS+/cuUMIcXd3T0hI0NXV7dKly5gxYxISEsR2oaOj4+TktGjRIvr0mRBy69atBQsWWFpa0v8YUBRFjwsEAuFWcnJyrq6u9LeLVVVVcXFxbm5ukj0W0FnhDBpYysnJ6dChQ9OnT+dyuZqamo8fP549e3ZYWBi99N69e4MHDy4rKzM3N586daqSktKMGTMsLCxcXFzu37//9ddfE0KioqJ8fHxiY2Pz8vIGDBgQEBDQeC9+fn7z58/funUrPTtlyhRvb+8BAwZUV1cPGDBg9erVR44cMTU1Xb16dZ8+fYRb/fDDD2PHjj1+/HhOTs6oUaM8PT0lfzygM+IIzxEAAIBVcIkDAIClENAAACyFgAYAYCkENAAASyGgAQBYCgENAMBSCGgAAJZCQAMAsBQCGgCApRDQAAAshYAGAGApBDQAAEshoAEAWAoBDQDAUghoAACWQkADALAUAhoAgKUQ0AAALPV/yknF8RMDbBoAAAAASUVORK5CYII="
+        },
+        {
+          "type": "input_text",
+          "text": "The attached synthetic plot contains a sentinel in its title. Read the title and reply with only the sentinel text.",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<environment_context>\n<date>\nToday's date is: Monday, January 15, 2024 at 12:00:00 PM UTC\n</date>\n\n<language_session description=\"Current active language session\" language=\"R\" version=\"4.6.1\" mode=\"console\" identifier=\"golden-r-session\">\n<variables description=\"Variables defined in the current session, in a pipe-delimited format, where each line is `name|type`.\">\ncapture_fit|lm\ncapture_data|data.frame\ncapture_token|character\n</variables>\n</language_session>\n</environment_context>"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<system-reminder>\nBatch tool calls aggressively: calls in one response run in order (a contiguous run of parallel-safe tools may run concurrently), so emit every call whose input doesn't depend on an earlier call's output together — e.g. several edits, or an edit then bash. Don't end your response just to narrate; narrate briefly before a batch and summarize after results return.\n</system-reminder>"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "input_text",
+          "text": "<system-reminder>\nDuring reasoning, mark focus shifts with topic labels on their own line:\n<topic>Present-tense thought phrase</topic>\nUse 3-7 words each; prefer thinking verbs (Considering, Weighing, Comparing). Aim for 2-5 labels per response. Only in reasoning, never in your response to the user.\n</system-reminder>",
+          "prompt_cache_breakpoint": {
+            "mode": "explicit"
+          }
+        }
+      ]
+    }
+  ],
+  "max_output_tokens": 128000,
+  "store": false,
+  "include": [
+    "reasoning.encrypted_content"
+  ],
+  "prompt_cache_key": "golden-conversation-03",
+  "prompt_cache_options": {
+    "mode": "explicit",
+    "ttl": "30m"
+  },
+  "reasoning": {
+    "effort": "medium",
+    "summary": "detailed"
+  },
+  "tools": [
+    {
+      "type": "function",
+      "name": "read",
+      "description": "Read the contents of a file. Use relative paths (e.g., src/main.ts) to refer to files under the <working_directory>, or absolute paths (e.g., /tmp/data.csv) for files elsewhere. Returns content with line numbers (cat -n format). By default reads up to 2000 lines. Lines longer than 2000 characters are truncated. Use offset and limit parameters to read specific line ranges. Supports images (PNG, JPG, GIF, WebP up to 5 MB).",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "File path. Relative paths (e.g., src/main.ts) resolve from <working_directory>. Use absolute paths (e.g., /tmp/file.txt) for files outside the working directory."
+          },
+          "offset": {
+            "description": "Line number to start reading from (1-indexed). Defaults to 1",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "limit": {
+            "description": "Maximum number of lines to read. Defaults to 2000 lines if not specified",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "file_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "write",
+      "description": "Write content to a file. Use relative paths (e.g., src/main.ts) to refer to files under the <working_directory>, or absolute paths (e.g., /tmp/data.csv) for files elsewhere. By default, fails if file already exists unless overwrite is true.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "File path. Relative paths (e.g., src/main.ts) resolve from <working_directory>. Use absolute paths (e.g., /tmp/file.txt) for files outside the working directory."
+          },
+          "content": {
+            "type": "string",
+            "description": "Content to write to the file"
+          },
+          "overwrite": {
+            "description": "If true, overwrite existing file. If false or not specified, fail if file exists",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "file_path",
+          "content"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "edit",
+      "description": "Edit a file by performing exact string replacement. Use relative paths (e.g., src/main.ts) to refer to files under the <working_directory>, or absolute paths (e.g., /tmp/data.csv) for files elsewhere. By default, fails if old_string appears more than once (to ensure unambiguous edits). Use replace_all=true to replace all occurrences. You may batch multiple edit calls to the same file in a single response when they touch separate parts of the file; they are applied in order. Write each old_string against the current file content. If edits overlap or one depends on another's result, issue them in separate responses.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "File path. Relative paths (e.g., src/main.ts) resolve from <working_directory>. Use absolute paths (e.g., /tmp/file.txt) for files outside the working directory."
+          },
+          "old_string": {
+            "type": "string",
+            "description": "The text to replace. Reproduce it exactly from the current file contents, including indentation."
+          },
+          "new_string": {
+            "type": "string",
+            "description": "The text to replace it with (must be different from old_string)"
+          },
+          "replace_all": {
+            "description": "If true, replace all occurrences. If false (default), fail if old_string appears more than once",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "file_path",
+          "old_string",
+          "new_string"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "ls",
+      "description": "List contents of a directory. Use relative paths (e.g., src) to refer to directories under the <working_directory>, or absolute paths (e.g., /tmp) for directories elsewhere. Defaults to the working directory. By default shows file/directory names. Use show_details=true to include sizes and modification times.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "path": {
+            "description": "Directory path. Relative paths (e.g., src) resolve from <working_directory>. Use absolute paths (e.g., /tmp) for directories outside the working directory. Defaults to the working directory.",
+            "type": "string"
+          },
+          "show_details": {
+            "description": "If true, show file sizes and modification times. Defaults to false",
+            "type": "boolean"
+          },
+          "limit": {
+            "description": "Maximum number of entries to return. Defaults to 1000.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "offset": {
+            "description": "Number of entries to skip before returning results. Defaults to 0.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "webfetch",
+      "description": "Fetch content from a URL. HTML pages are converted to markdown for easier reading. Returns raw content for JSON, plain text, and other formats. Use for retrieving web pages, API responses, or documentation. For GitHub issues, pull requests, or repository URLs, prefer the `gh` CLI via `bash` over this tool.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL to fetch (HTTP or HTTPS)"
+          },
+          "timeout": {
+            "description": "Request timeout in milliseconds (default: 30000, max: 120000)",
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 120000
+          },
+          "raw": {
+            "description": "Return raw content without markdown conversion (default: false)",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "todoWrite",
+      "description": "Track progress on multi-step tasks. Use this to show users what you're working on and update status as you complete items.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "todos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "What needs to be done"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "in_progress",
+                    "completed"
+                  ],
+                  "description": "Current status"
+                }
+              },
+              "required": [
+                "content",
+                "status"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "todos"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "grep",
+      "description": "Search for text or regex patterns in workspace files. Returns matching lines with file paths and line numbers. Very long lines are truncated around the match. Automatically skips binary files and hidden directories.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Text or regex pattern to search for"
+          },
+          "path": {
+            "description": "Directory or file path to search in, relative to workspace (default: '.' for workspace root)",
+            "type": "string"
+          },
+          "caseSensitive": {
+            "description": "Perform case-sensitive search (default: false)",
+            "type": "boolean"
+          },
+          "maxResults": {
+            "description": "Maximum number of matches to return (default: 100)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "pattern"
+        ],
+        "description": "Parameters for searching text in files",
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "bash",
+      "description": "Execute a shell command. Starts in <working_directory>. For files outside <working_directory>, use absolute paths; avoid `cd` unless the user explicitly requests a directory change; never prepend `cd` to commands like git that already operate on the working tree. Returns stdout, stderr, and exit code. Use with caution — commands run with current user permissions. **Never** communicate with the user via code in this tool. When dedicated tools are available, prefer them over bash for file operations (`read`, `write`, `edit`, `ls`, `grep`). Multiple bash calls in the same response may run **concurrently** — ordering between them is not guaranteed. For commands that must run in order, put them in a single call chained with `&&` (or `;` if later commands should run even when an earlier one fails). Set `dangerReason` for irreversible or destructive commands, but not for routine operations like writing files or installing packages.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string",
+            "description": "Shell command to execute"
+          },
+          "intent": {
+            "description": "A short summary of the intent of the command.",
+            "type": "string"
+          },
+          "dangerReason": {
+            "description": "If this command could be destructive or dangerous (e.g., deleting files, dropping tables, killing processes), explain the risk here. When provided, the user will always be prompted for confirmation.",
+            "type": "string"
+          },
+          "dangerouslyDisableSandbox": {
+            "description": "Ignore this parameter unless you have been told that sandbox mode is enabled. Set to true to run this command outside the sandbox. Only use when a command fails due to sandbox restrictions (e.g., 'Operation not permitted' for file/network operations outside allowed paths). You MUST also provide a dangerReason explaining which sandbox restriction caused the failure.",
+            "type": "boolean"
+          },
+          "timeout": {
+            "description": "Timeout in milliseconds (default: 120000 / 2 minutes)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "command"
+        ],
+        "description": "Parameters for executing a shell command",
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "executeCode",
+      "description": "Execute code in RStudio's active R session. The code runs in the same environment as the RStudio console, with access to all loaded libraries and variables. Code execution output is streamed to the UI. Results include printed console output (stdout/stderr) and any generated plots. Use this tool to perform data analysis, statistical computations, create visualizations, and manipulate data files. Set `dangerReason` when the command could cause irreversible data loss or system changes. Do not set it for routine operations like writing files or installing packages.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The R code to execute in the active session."
+          },
+          "intent": {
+            "type": "string",
+            "description": "A short summary of the intent of the code."
+          },
+          "dangerReason": {
+            "description": "If this command could be destructive or dangerous (e.g., deleting files, dropping tables, killing processes), explain the risk here. When provided, the user will always be prompted for confirmation.",
+            "type": "string"
+          },
+          "timeout": {
+            "description": "Timeout in milliseconds for code execution (default: 30000). Increase for long-running computations.",
+            "type": "number"
+          }
+        },
+        "required": [
+          "code",
+          "intent"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "getConsoleContent",
+      "description": "Get recent content from the RStudio console. Useful for seeing command history, output, and error messages.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "limit": {
+            "description": "Maximum number of lines to retrieve (default 50).",
+            "type": "number"
+          },
+          "offset": {
+            "description": "Number of lines to skip (default 0).",
+            "type": "number"
+          },
+          "fromBottom": {
+            "description": "If true, read from the bottom of the console (default true).",
+            "type": "boolean"
+          },
+          "maxChars": {
+            "description": "Maximum total characters to return (default 8000).",
+            "type": "number"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "skill",
+      "description": "Load a skill's instructions into context. Skills provide domain-specific guidance for tasks like data analysis, visualization, or data cleaning.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "skill": {
+            "type": "string",
+            "description": "Name of the skill to load"
+          }
+        },
+        "required": [
+          "skill"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "launchSubagent",
+      "description": "Launch a nested AI agent to work on a specific task with custom context and tool access. The subagent runs independently with its own conversation history and returns its final result. Subagents do not inherit context from the current conversation; write precise task descriptions with necessary information (paths, goals, constraints, or background) so they can work autonomously. Use explore proactively for codebase and data investigation. Every subagent type accepts allowedTools, model, maxTurns, maxDepth, and thinkingEffort; canned types apply their built-in values as presets when these are omitted, except that allowedTools on a canned type can only narrow the type's built-in toolset.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "task": {
+            "type": "string",
+            "description": "Task description and instructions for the subagent to complete"
+          },
+          "intent": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A short (3-5 word) verb phrase summarizing the task, shown to the user in place of the full prompt. It must read correctly both as a label and after \"would like to launch a subagent to ...\", e.g. \"audit the auth flow\"."
+          },
+          "subagentType": {
+            "type": "string",
+            "enum": [
+              "general",
+              "explore"
+            ],
+            "description": "Which canned subagent type to launch.\n\n- `general`: General-purpose delegation. The caller may choose tools, model tier, thinking effort, turn budget, and nesting depth.\n- `explore`: Read-only codebase or data exploration. Use this proactively to find files, search for keywords, or answer open-ended questions. Put the desired breadth in the task and use absolute paths. Presets (overridable): model tier \"low\", 25 max turns, maxDepth 0, and a read-only toolset (listing, reading, and content-search tools) that allowedTools can only narrow."
+          },
+          "allowedTools": {
+            "description": "Exact names of tools available to the subagent, with no namespace prefix (for example, `read`, not `functions.read`). Unrecognized names are rejected. For general launches, omitting this gives the subagent all available tools subject to model and depth restrictions; canned types instead use their built-in toolset when omitted. On a canned subagent type this can only narrow the type's built-in toolset, never widen it; a narrowing that leaves no tools fails the launch.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "maxTurns": {
+            "description": "Maximum conversation turns before stopping (default: 25, minimum: 1)",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "maxDepth": {
+            "description": "How many additional nested subagent levels this subagent may open. 0 still allows this subagent but forbids further nested subagents. Defaults to 1 for general launches; canned types use their built-in preset when omitted (explore: 0). This can only lower the built-in nesting ceiling of 2 levels, never raise it — out-of-range values are silently clamped.",
+            "type": "number"
+          },
+          "model": {
+            "description": "Model tier for the subagent. \"default\" reuses the model launching this subagent; omission does the same for general launches, while canned types apply their built-in tier preset when omitted (explore: \"low\"). Use \"low\" for well-defined mechanical work such as searching files, gathering information, or summarizing content. Use \"medium\" for routine work that needs judgment. Use \"high\" for difficult reasoning when the extra cost and latency are justified. Every choice stays on the current provider. The server chooses the concrete serving model; provider-specific model names are not accepted.",
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "default"
+            ]
+          },
+          "thinkingEffort": {
+            "description": "Thinking effort level for the subagent's model (for example, \"low\", \"medium\", or \"high\"). This is independent of the model tier: the model tier chooses which model serves the subagent, while thinking effort controls how much that model reasons per step. Valid levels depend on the resolved model; an unsupported level fails the launch with an error listing the model's valid levels. If omitted, the tier's configured default applies (or \"medium\"), mapped to the nearest supported level when the resolved model lacks it.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "task",
+          "intent",
+          "subagentType"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "EnterMode",
+      "description": "Enter a mode (e.g., Plan mode). Modes provide specialized behavior and prompts for specific workflows.\n\n## Plan\nEnter Plan mode to design an implementation approach before making changes. In Plan mode you should explore the codebase, ask clarifying questions, and write a step-by-step plan to a plan file for the user's approval.\n\nExit Plan mode with the ExitMode tool when ready to implement, the user will be shown the plan and asked for their confirmation.\n\n## Cleaning\nEnter Cleaning mode to rapidly audit, tidy, wrangle, or quality-check a dataset, surfacing cleaning decisions to the user. In Cleaning mode you inspect column names, variable types, distinct values, outliers, and potential data-entry errors, transform to tidy data, and drive every substantive cleaning decision through the AskUser tool so the user can approve, choose between options, or provide their own instruction.\n\nExit Cleaning mode with the ExitMode tool when the audit is complete.\n\n## Ask\nAsk mode is a read-only mode: the assistant explores and answers questions without changing anything — no workspace or home-directory writes, and no code execution.\n\nUser-entry only — you cannot enter this mode with the EnterMode tool. If the user wants a read-only session, suggest they type /ask or use the mode picker.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "Name of the mode to enter"
+          },
+          "title": {
+            "description": "Optional descriptive title for the planning session (e.g., 'refactor runtime services')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "ExitMode",
+      "description": "Exit the current mode (e.g., leave Plan mode). Returns to the default mode behavior.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    },
+    {
+      "type": "function",
+      "name": "AskUser",
+      "description": "Surface a structured question to the user and wait for their answer. Use when the decision is enumerable (click beats typing) or when you have multiple decisions to batch — emit multiple AskUser tool calls in the same assistant message and they will be presented in parallel as a tab strip. For a single free-form clarifying question in normal chat, prefer asking inline in your response instead of calling this tool. Options render as buttons; a free-text box is always offered alongside options.",
+      "parameters": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short headline for the question (≈ 3–6 words) that will be shown as the tab label and question heading. Prefer noun phrases describing the decision (e.g., `factor column casing`, `age outliers`, `rename ID columns`)."
+          },
+          "question": {
+            "type": "string",
+            "description": "The question or decision you want to surface to the user, situated in a sentence or two of plain-English explanation. When evidence is tabular (value counts, missingness summaries, distinct values), use a real GitHub-flavored markdown table rather than space-aligned text in a code block — tables render with borders and zebra striping and are much easier to scan. Keep tables to at most ~10 rows; if the underlying data has more, show a representative subset and note the truncation next to the table, e.g., `(showing top 10 of 23)`. Reserve fenced code blocks for actual code snippets, not tabular data."
+          },
+          "options": {
+            "description": "Optional enumerated choices. Each option's `label` is what the user clicks; the optional `description` is a short explanatory caption. Omit for open-ended questions that are best answered with free text.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "recommended": {
+                  "description": "Set to `true` on the option you'd highlight as the best default for the user to consider. This is purely a UI hint that makes the user's scan of the options faster — it is NEVER authorization to apply that option without an explicit user selection. Always wait for the user to choose (or cancel) before acting. Mark at most one option per question as recommended.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "title",
+          "question"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "tool_choice": "auto",
+  "stream": true
+}

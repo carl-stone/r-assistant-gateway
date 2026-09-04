@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "generator": "posit-codex-gateway sanitize-posit-corpus",
+  "files": {
+    "0001-01-plain-chat.json": "5f681331e8b8d2a0100f7d42a0ac7c7727dce9e72e8487936592683bcbcf6902",
+    "0002-02-project-file-tool.json": "30b3a0f508fc67db9a020732da769b1e7f1c2ab9937548bb3cad75f7dd9017de",
+    "0003-02-project-file-tool.json": "1005e7d7e3d9f7a29bfe4b08423d1af865abdd2a0bb913a9c9e9e278661adcab",
+    "0004-03-live-r-execute.json": "75207941bdd17b72cf1171bc92f44ae65e7ec2a61f306cb8f0ffe8b1a736b4a2",
+    "0005-03-live-r-execute.json": "fa2236de1f0a2273a1695f0c25b474e9561a47f3b20d1fbbb9db29dbfe6e5cc9",
+    "0006-03-live-r-execute.json": "57e5ccc466c84ea071b7d365d160abdb849289f8a798a898b01f4f1fa2463a14",
+    "0007-04-image-attachment.json": "b85ec06eee892134c654ab83cd2261492101ced71ae2754104d111d6bc2cbbba",
+    "0008-05-pdf-attachment.json": "3524341d2b4b7fb0e99d9049987cc891812dd23a5b3722e6b41aad6f1f05bbbe",
+    "0009-06-active-editor-selection.json": "00da07b8209129e6ebec15f445d8a19517f22ce7bcd1e72ef1d0c33ec311bd97",
+    "0011-08-missing-file-tool-error.json": "a61a43c93618b655ade28efb917a75203260a745e29211471f00cc993226a2b8",
+    "0012-08-missing-file-tool-error.json": "68b4f3f00de7aefb9511adf101cd0884e3f1f8e47efb82d7c982e72161f14592"
+  }
+}
