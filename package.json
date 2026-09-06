@@ -1,6 +1,6 @@
 {
   "name": "posit-codex-gateway",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Unofficial local gateway from Posit Assistant in RStudio and Positron to ChatGPT/Codex OAuth",
   "type": "module",
   "license": "Apache-2.0",
