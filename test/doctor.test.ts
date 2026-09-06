@@ -10,6 +10,7 @@ import {
 
 let positRoot: string;
 let runtimeRoot: string;
+const originalExtensionsRoot = process.env.POSITRON_EXTENSIONS_DIR;
 const originalPositRoot = process.env.POSIT_ASSISTANT_ROOT;
 const originalRuntimeRoot =
 	process.env.POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR;
@@ -19,6 +20,7 @@ beforeEach(async () => {
 	runtimeRoot = path.join(positRoot, "runtime");
 	await mkdir(runtimeRoot);
 	process.env.POSIT_ASSISTANT_ROOT = positRoot;
+	process.env.POSITRON_EXTENSIONS_DIR = path.join(positRoot, "extensions");
 	process.env.POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR = runtimeRoot;
 	vi.stubGlobal(
 		"fetch",
@@ -27,6 +29,9 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+	if (originalExtensionsRoot === undefined)
+		delete process.env.POSITRON_EXTENSIONS_DIR;
+	else process.env.POSITRON_EXTENSIONS_DIR = originalExtensionsRoot;
 	if (originalPositRoot === undefined) {
 		delete process.env.POSIT_ASSISTANT_ROOT;
 	} else {
@@ -60,7 +65,7 @@ describe.sequential("doctor gateway compatibility", () => {
 			version: "1.3.0",
 			path: positRoot,
 		});
-		expect(report.compatibility).toEqual({
+		expect(report.compatibility).toMatchObject({
 			supported: true,
 			expectedPositAssistantVersion: "1.3.0",
 			expectedOpenaiOauthVersion: SUPPORTED_OPENAI_OAUTH_VERSION,
@@ -76,7 +81,7 @@ describe.sequential("doctor gateway compatibility", () => {
 
 		const report = await runDoctor();
 
-		expect(report.compatibility).toEqual({
+		expect(report.compatibility).toMatchObject({
 			supported: false,
 			expectedPositAssistantVersion: "1.3.0",
 			expectedOpenaiOauthVersion: SUPPORTED_OPENAI_OAUTH_VERSION,
@@ -124,4 +129,70 @@ describe.sequential("doctor gateway compatibility", () => {
 			url: "http://127.0.0.1:15432/health",
 		});
 	});
+});
+
+const installExtension = async (version: string) => {
+	const name = `posit.assistant-${version}-universal`;
+	const directory = path.join(positRoot, "extensions", name);
+	await mkdir(directory, { recursive: true });
+	await writeFile(
+		path.join(directory, "package.json"),
+		JSON.stringify({ name: "assistant", publisher: "posit", version }),
+	);
+	return { name, directory };
+};
+
+test("supports Positron without an RStudio installation", async () => {
+	const extension = await installExtension("1.3.1");
+	const report = await runDoctor();
+	expect(report.positAssistant.version).toBe("not installed");
+	expect(report.positronAssistant).toEqual({
+		version: "1.3.1",
+		path: extension.directory,
+	});
+	expect(report.compatibility.supported).toBe(true);
+});
+
+test("reports both IDEs and accepts Positron alongside an older RStudio Assistant", async () => {
+	await writeFile(
+		path.join(positRoot, "package.json"),
+		JSON.stringify({ version: "0.9.8" }),
+	);
+	await installExtension("1.3.1");
+	const report = await runDoctor();
+	expect(report.positAssistant.version).toBe("0.9.8");
+	expect(report.positronAssistant.version).toBe("1.3.1");
+	expect(report.compatibility.supported).toBe(true);
+});
+
+test("does not let an old supported extension mask a newer untested registered version", async () => {
+	await installExtension("1.3.1");
+	const current = await installExtension("1.4.0");
+	await writeFile(
+		path.join(positRoot, "extensions", "extensions.json"),
+		JSON.stringify([
+			{ identifier: { id: "posit.assistant" }, relativeLocation: current.name },
+		]),
+	);
+	const report = await runDoctor();
+	expect(report.positronAssistant.version).toBe("1.4.0");
+	expect(report.compatibility.supported).toBe(false);
+});
+
+test("ignores removed, malformed, and unrelated extensions", async () => {
+	const removed = await installExtension("1.3.1");
+	await writeFile(
+		path.join(positRoot, "extensions", ".obsolete"),
+		JSON.stringify({ [removed.name]: true }),
+	);
+	const malformed = await installExtension("1.3.2");
+	await writeFile(path.join(malformed.directory, "package.json"), "{");
+	const unrelated = await installExtension("1.3.3");
+	await writeFile(
+		path.join(unrelated.directory, "package.json"),
+		JSON.stringify({ name: "assistant", publisher: "other", version: "1.3.1" }),
+	);
+	const report = await runDoctor();
+	expect(report.positronAssistant.version).toBe("not installed");
+	expect(report.compatibility.supported).toBe(false);
 });

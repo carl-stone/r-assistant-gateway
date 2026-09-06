@@ -1,15 +1,16 @@
 import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { resolveGatewayRuntimeDirectory } from "./upstream-cli.js";
 
-type PackageInfo = { version?: string };
+type PackageInfo = { version?: string; name?: string; publisher?: string };
 type RuntimeInfo = { url?: string };
 
 export const SUPPORTED_POSIT_ASSISTANT_VERSION = "1.3.0";
+export const SUPPORTED_POSITRON_ASSISTANT_VERSION = "1.3.1";
 export const SUPPORTED_OPENAI_OAUTH_VERSION = "2.0.0-memory.2";
 
 const readJson = async <T>(file: string): Promise<T | undefined> => {
@@ -73,6 +74,54 @@ const positAssistantRoots = (): string[] => {
 	];
 };
 
+type ExtensionEntry = {
+	identifier?: { id?: string };
+	relativeLocation?: string;
+};
+
+const detectPositronAssistant = async () => {
+	const root =
+		process.env.POSITRON_EXTENSIONS_DIR ??
+		path.join(os.homedir(), ".positron", "extensions");
+	const registry = await readJson<ExtensionEntry[]>(
+		path.join(root, "extensions.json"),
+	);
+	const obsolete = await readJson<Record<string, boolean>>(
+		path.join(root, ".obsolete"),
+	);
+	// Prefer the registry so leftover directories from an upgrade are not reported.
+	const names = Array.isArray(registry)
+		? registry
+				.filter((entry) => entry.identifier?.id === "posit.assistant")
+				.map((entry) => entry.relativeLocation)
+				.filter((name): name is string => typeof name === "string")
+		: (await readdir(root).catch(() => [])).filter((name) =>
+				name.startsWith("posit.assistant-"),
+			);
+	const installations = await Promise.all(
+		names
+			.filter((name) => path.basename(name) === name && !obsolete?.[name])
+			.map(async (name) => {
+				const directory = path.join(root, name);
+				const info = await readJson<PackageInfo>(
+					path.join(directory, "package.json"),
+				);
+				if (
+					info?.name !== "assistant" ||
+					info.publisher !== "posit" ||
+					typeof info.version !== "string"
+				)
+					return undefined;
+				return { version: info.version, path: directory };
+			}),
+	);
+	const found = installations.filter((item) => item !== undefined);
+	found.sort((a, b) =>
+		b.version.localeCompare(a.version, "en", { numeric: true }),
+	);
+	return found[0] ?? { version: "not installed", path: root };
+};
+
 export const runDoctor = async () => {
 	const roots = positAssistantRoots();
 	let positRoot = roots[0] ?? "";
@@ -88,6 +137,7 @@ export const runDoctor = async () => {
 		}
 	}
 
+	const positronAssistant = await detectPositronAssistant();
 	const oauthPackageJson = resolveOAuthPackageJson();
 	const [gateway, oauth, runtime] = await Promise.all([
 		readJson<PackageInfo>(path.join(packageRoot, "package.json")),
@@ -140,11 +190,14 @@ export const runDoctor = async () => {
 			version: positVersion,
 			path: positRoot,
 		},
+		positronAssistant,
 		compatibility: {
 			supported:
-				positVersion === SUPPORTED_POSIT_ASSISTANT_VERSION &&
+				(positVersion === SUPPORTED_POSIT_ASSISTANT_VERSION ||
+					positronAssistant.version === SUPPORTED_POSITRON_ASSISTANT_VERSION) &&
 				oauthVersion === SUPPORTED_OPENAI_OAUTH_VERSION,
 			expectedPositAssistantVersion: SUPPORTED_POSIT_ASSISTANT_VERSION,
+			expectedPositronAssistantVersion: SUPPORTED_POSITRON_ASSISTANT_VERSION,
 			expectedOpenaiOauthVersion: SUPPORTED_OPENAI_OAUTH_VERSION,
 		},
 		localHealth: health,

@@ -35,7 +35,7 @@ export const brandUpstreamCliText = (text: string): string => {
 	return branded
 		.replace(
 			"Free OpenAI API access with your ChatGPT account.",
-			"Use RStudio Posit Assistant with your ChatGPT account.",
+			"Use Posit Assistant in RStudio or Positron with your ChatGPT account.",
 		)
 		.replaceAll("npx openai-oauth stop", "npx posit-codex-gateway stop")
 		.replaceAll("npx openai-oauth logs", "npx posit-codex-gateway logs")

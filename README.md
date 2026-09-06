@@ -1,7 +1,7 @@
 # posit-codex-gateway
 
 Love Codex models, hate API prices? ☀️ 🌍 🌙
-Use your existing ChatGPT/Codex subscription sign-in with Posit Assistant in RStudio.
+Use your existing ChatGPT/Codex subscription sign-in with Posit Assistant in RStudio or Positron.
 
 `posit-codex-gateway` is a small local compatibility bridge between Posit
 Assistant's OpenAI Responses client and ChatGPT/Codex. It uses
@@ -20,8 +20,11 @@ API-key replacement for other applications.
 You need:
 
 - [Node.js 20 or newer](https://nodejs.org/en/download);
-- RStudio 2026.04.0 or newer with Posit Assistant 1.3.0; and
+- RStudio or Positron with Posit Assistant installed; and
 - a ChatGPT/Codex Plus or Pro subscription.
+
+Tested with Posit Assistant **1.3.0 and 1.3.1**. Compatibility with older
+versions is unknown.
 
 The gateway uses your ChatGPT/Codex sign-in. You do not need an OpenAI API key.
 
@@ -46,8 +49,16 @@ posit-codex-gateway --detach
 
 ### Connect Posit Assistant
 
-In the Posit Assistant pane in RStudio, select **gear > Configure AI providers
-> OpenAI**, then use:
+Choose the **OpenAI** provider in either IDE:
+
+- **RStudio:** in the Posit Assistant pane, select **gear > Configure AI
+  providers > OpenAI**.
+- **Positron:** open the Command Palette, run **Authentication: Configure
+  Language Model Providers**, and select **OpenAI**. The separately named
+  **OpenAI Compatible** provider defaults to Chat Completions; this gateway
+  uses Responses.
+
+Enter the same connection settings in either IDE:
 
 | Setting | Value |
 | --- | --- |
@@ -57,7 +68,53 @@ In the Posit Assistant pane in RStudio, select **gear > Configure AI providers
 `local-gateway` is only a non-secret placeholder required by the OpenAI setup
 form. The gateway does not use it as an OpenAI API key; upstream requests use
 your ChatGPT/Codex sign-in. A non-empty value also lets Posit Assistant discover
-the models available through your account from the gateway.
+the models available through your account from the gateway. One running gateway
+can serve both IDEs on the same computer. In Positron, open the chat with
+**View: Show Posit Assistant**. See the official
+[Positron provider instructions](https://positron.posit.co/assistant-providers.html)
+for the provider dialog.
+
+### A model is missing from the Positron selector
+
+Posit Assistant 1.3.1 in Positron filters OpenAI model discovery to IDs beginning
+with `gpt-5`, `gpt-4`, or `o`. This hides `gpt-6-astra` even when the gateway
+correctly lists it. Add the model explicitly using **Open AI Provider Settings
+(JSON)**, which opens `~/.posit/ai/providers.json`.
+
+Merge this example into your existing `providers.openai` settings, preserving
+any other providers or custom models:
+
+```json
+{
+  "providers": {
+    "openai": {
+      "baseUrl": "http://127.0.0.1:10532/v1",
+      "models": {
+        "custom": [
+          {
+            "id": "gpt-6-astra",
+            "name": "GPT-6 Astra",
+            "protocol": "openai-responses",
+            "maxContextLength": 272000,
+            "supportsTools": true,
+            "supportsImages": true,
+            "supportsToolResultImages": true,
+            "supportsWebSearch": false,
+            "thinkingEffortLevels": ["low", "medium", "high", "xhigh", "max", "ultra"]
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+Reopen the model selector; if needed, run **Developer: Reload Window**. This
+adds Astra alongside automatically discovered models. It does not grant access
+to models unavailable to your account. The example reflects the Astra metadata
+used in the September 2026 validation; check current model capabilities when
+adding other models. See Posit’s
+[custom model settings reference](https://assistant.posit.co/docs/reference/providers-settings/).
 
 ## Start, check, and stop the gateway
 
@@ -77,7 +134,8 @@ the provider's base URL to match.
 
 ## What the gateway translates
 
-Posit Assistant 1.3.0 uses the OpenAI Responses wire format. For current Codex
+Posit Assistant uses the OpenAI Responses wire format in both IDEs when the
+OpenAI provider is selected. For current Codex
 models it can send developer and user input, images and files, tool definitions,
 function calls, structured function outputs, encrypted reasoning, and explicit
 prompt-cache controls.
@@ -100,16 +158,16 @@ transport, and server lifecycle. The gateway defaults its optional Responses
 history to process-local memory so ID-based continuations can be resolved when
 needed. That history is discarded whenever the gateway stops.
 
-## Supported versions
+## Tested versions
 
-Gateway 0.2.x is compatible with Posit Assistant 1.3.0, the Codex Responses
-request contract around Codex CLI 0.153.x, and `@carl-stone/openai-oauth`
-2.0.0-memory.2.
+Gateway 0.2.x has been tested with Posit Assistant **1.3.0 and 1.3.1**.
+Compatibility with older versions is unknown. These are tested configurations,
+not minimum version requirements:
 
-RStudio's release and its internal RStudio–Assistant JSON-RPC protocol are not
-part of the gateway's wire contract. The golden corpus records them only as
-capture provenance. See [the developer interface notes](dev/README.md) for the
-three distinct boundaries.
+| IDE | Tested Posit Assistant version |
+| --- | --- |
+| RStudio | 1.3.0 |
+| Positron | 1.3.1 |
 
 ## Troubleshooting
 
@@ -119,14 +177,25 @@ Run the read-only diagnostic report with:
 posit-codex-gateway doctor
 ```
 
-It reports the installed gateway, Posit Assistant, and OAuth runtime versions;
-whether Posit Assistant 1.3.0 is installed; and whether the active local gateway
-is healthy. It exits unsuccessfully if the tested software does not match or the
-gateway is unreachable. It does not read conversations or credentials.
+It reports the installed gateway and OAuth runtime versions, Posit Assistant
+in RStudio (`positAssistant`) and Positron (`positronAssistant`), and the active
+gateway’s health. Each Assistant entry includes its version and installation
+path. The compatibility check recognizes the tested configurations: RStudio
+Assistant 1.3.0 or Positron Assistant 1.3.1, alongside the expected OAuth runtime.
+An unrecognized Assistant version is untested, not necessarily incompatible. An older or
+missing installation in the other IDE does not prevent success. The command
+still exits unsuccessfully if the gateway health check fails.
+
+Positron detection checks `~/.positron/extensions`, using the extension registry
+when available and ignoring removed extensions. For a custom extension directory
+(such as a `--extensions-dir` setup), set `POSITRON_EXTENSIONS_DIR`. Detection
+reports installed packages; it does not check whether an extension is enabled
+in the active Positron profile. The diagnostic report does not read conversations
+or credentials.
 
 Common fixes:
 
-- **RStudio cannot connect:** make sure the gateway is running and the base URL
+- **RStudio or Positron cannot connect:** make sure the gateway is running and the base URL
   is exactly `http://127.0.0.1:10532/v1`.
 - **The port is busy:** stop the other process, or start with
   `posit-codex-gateway --port <number>` and update the base URL.
@@ -134,9 +203,13 @@ Common fixes:
   gateway.
 - **A conversation fails after restarting the gateway:** start a new Posit
   Assistant conversation. Temporary continuation state is cleared on restart.
-- **`doctor` reports an unsupported version:** install Posit Assistant 1.3.0.
+- **`doctor` does not recognize your Assistant version:** versions 1.3.0 and
+  1.3.1 are tested; compatibility with older versions is unknown. A failed
+  version check does not establish that your installation cannot work.
   For an administrator-managed or otherwise nonstandard installation, set
-  `POSIT_ASSISTANT_ROOT` to its `pai/bin` directory before running `doctor`.
+  `POSIT_ASSISTANT_ROOT` to RStudio’s `pai/bin` directory, or
+  `POSITRON_EXTENSIONS_DIR` to Positron’s extension directory, before running
+  `doctor`.
 - **`doctor` reports an unexpected OAuth runtime:** reinstall the matching
   `posit-codex-gateway` release rather than upgrading its runtime directly.
 - **The background gateway is not working:** run `status`, inspect `logs`, then
@@ -191,7 +264,7 @@ consider that configuration healthy for Posit Assistant. `doctor` and
 ## Development
 
 Start with [the interface and reverse-engineering notes](dev/README.md) to see
-which traffic belongs to RStudio, Posit Assistant, the gateway, and Codex.
+which traffic belongs to each IDE, Posit Assistant, the gateway, and Codex.
 
 ```sh
 npm install
@@ -205,15 +278,6 @@ and a detached end-to-end CLI test using a Posit Assistant 1.3.0-shaped request.
 CI also performs an npm package dry run. A separate scheduled/manual workflow
 verifies that every root field forwarded by the adapter remains accepted by
 Codex. Dependabot watches npm and GitHub Actions dependencies.
-
-The compact unit fixture follows the installed Posit Assistant 1.3.0 bundle,
-which embeds `@ai-sdk/openai` 3.0.88, and the matching public
-[`posit-dev/ai-lib`](https://github.com/posit-dev/ai-lib) OpenAI client and
-wire-format tests. A separate
-[sanitized golden corpus](test/corpus/posit-1.3.0/README.md) was captured from
-actual RStudio traffic before gateway adaptation. It covers multi-turn history,
-tools and structured results, live R context, PNG and PDF inputs, the safety
-classifier, and a tool failure.
 
 ## Credits and license
 
