@@ -73,7 +73,7 @@ describe("Codex contract compatibility", () => {
 		expect(result.unsupportedByUpstream).toEqual([]);
 	});
 
-	test("accepts additive upstream fields that Posit does not send", async () => {
+	test("accepts additive upstream fields that the adapter does not send", async () => {
 		const source = `pub struct ResponsesApiRequest {\n${[
 			...fields,
 			"access_programs",

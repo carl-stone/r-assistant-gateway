@@ -271,7 +271,7 @@ npm pack --dry-run
 ```
 
 `npm run verify` performs typechecking, linting, unit tests, a TypeScript build,
-and a detached end-to-end CLI test using a Posit Assistant 1.3.0-shaped request.
+and a detached end-to-end CLI test using a synthetic Responses API request.
 CI also performs an npm package dry run. A separate scheduled/manual workflow
 verifies that every root field forwarded by the adapter remains accepted by
 Codex. Dependabot watches npm and GitHub Actions dependencies.

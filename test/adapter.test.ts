@@ -5,7 +5,7 @@ import { adaptResponsesBody } from "../src/adapter.js";
 const fixture = async () =>
 	JSON.parse(
 		await readFile(
-			new URL("./fixtures/posit-1.3.0-responses.json", import.meta.url),
+			new URL("./fixtures/responses-request.json", import.meta.url),
 			"utf8",
 		),
 	) as Record<string, unknown>;
@@ -23,7 +23,7 @@ describe("adaptResponsesBody", () => {
 			"**.prompt_cache_breakpoint",
 			"prompt_cache_options",
 		]);
-		expect(adapted.body.prompt_cache_key).toBe("posit-session");
+		expect(adapted.body.prompt_cache_key).toBe("test-session");
 		expect(adapted.body.reasoning).toEqual({
 			effort: "high",
 			summary: "detailed",

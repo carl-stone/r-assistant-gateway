@@ -23,7 +23,7 @@ const packageVersion = (
 	JSON.parse(await readFile("package.json", "utf8")) as { version: string }
 ).version;
 const positRequest = JSON.parse(
-	await readFile("test/fixtures/posit-1.3.0-responses.json", "utf8"),
+	await readFile("test/fixtures/responses-request.json", "utf8"),
 ) as Record<string, unknown>;
 const env = {
 	...process.env,
@@ -188,7 +188,7 @@ try {
 	}
 	const serializedForwardedBody = JSON.stringify(forwardedBody);
 	const adaptationFailures = [
-		forwardedBody.prompt_cache_key !== "posit-session" && "cache key changed",
+		forwardedBody.prompt_cache_key !== "test-session" && "cache key changed",
 		"max_output_tokens" in forwardedBody && "output limit remained",
 		"prompt_cache_options" in forwardedBody && "cache options remained",
 		serializedForwardedBody.includes("prompt_cache_breakpoint") &&
