@@ -1,9 +1,9 @@
-# posit-codex-gateway
+# R Assistant Gateway
 
 Love Codex models, hate API prices? ☀️ 🌍 🌙
 Use your existing ChatGPT/Codex subscription sign-in with Posit Assistant in RStudio or Positron.
 
-`posit-codex-gateway` is a small local compatibility bridge between Posit
+`r-assistant-gateway` is a small local compatibility bridge between Posit
 Assistant's OpenAI Responses client and ChatGPT/Codex. It uses
 [`@carl-stone/openai-oauth`](https://github.com/carl-stone/openai-oauth) to sign
 in with your ChatGPT account and translates Posit Assistant's requests into the
@@ -19,7 +19,7 @@ API-key replacement for other applications.
 
 You need:
 
-- [Node.js 20 or newer](https://nodejs.org/en/download);
+- [Node.js 24 or newer](https://nodejs.org/en/download);
 - RStudio or Positron with Posit Assistant installed; and
 - a ChatGPT/Codex Plus or Pro subscription.
 
@@ -33,9 +33,9 @@ The gateway uses your ChatGPT/Codex sign-in. You do not need an OpenAI API key.
 With Node.js installed, run these commands in a Terminal window:
 
 ```sh
-npm install --global posit-codex-gateway
-posit-codex-gateway login
-posit-codex-gateway
+npm install --global r-assistant-gateway
+r-assistant-gateway login
+r-assistant-gateway
 ```
 
 The last command keeps the gateway running in the foreground. Leave that
@@ -44,7 +44,7 @@ Terminal window open while you use Posit Assistant.
 To run it in the background instead, use:
 
 ```sh
-posit-codex-gateway --detach
+r-assistant-gateway --detach
 ```
 
 ### Connect Posit Assistant
@@ -121,13 +121,13 @@ adding other models. See Posit’s
 These commands are useful when the gateway runs in the background:
 
 ```sh
-posit-codex-gateway status
-posit-codex-gateway logs --follow
-posit-codex-gateway doctor
-posit-codex-gateway stop
+r-assistant-gateway status
+r-assistant-gateway logs --follow
+r-assistant-gateway doctor
+r-assistant-gateway stop
 ```
 
-Run `posit-codex-gateway` again to start it in the foreground after stopping
+Run `r-assistant-gateway` again to start it in the foreground after stopping
 it. The default port is `10532`, which matches the Posit Assistant URL above.
 You can choose another port with, for example, `--port 10533`; if you do, change
 the provider's base URL to match.
@@ -174,7 +174,7 @@ not minimum version requirements:
 Run the read-only diagnostic report with:
 
 ```sh
-posit-codex-gateway doctor
+r-assistant-gateway doctor
 ```
 
 It reports the installed gateway and OAuth runtime versions, Posit Assistant
@@ -198,8 +198,8 @@ Common fixes:
 - **RStudio or Positron cannot connect:** make sure the gateway is running and the base URL
   is exactly `http://127.0.0.1:10532/v1`.
 - **The port is busy:** stop the other process, or start with
-  `posit-codex-gateway --port <number>` and update the base URL.
-- **Sign-in fails:** run `posit-codex-gateway login` again, then restart the
+  `r-assistant-gateway --port <number>` and update the base URL.
+- **Sign-in fails:** run `r-assistant-gateway login` again, then restart the
   gateway.
 - **A conversation fails after restarting the gateway:** start a new Posit
   Assistant conversation. Temporary continuation state is cleared on restart.
@@ -211,7 +211,7 @@ Common fixes:
   `POSITRON_EXTENSIONS_DIR` to Positron’s extension directory, before running
   `doctor`.
 - **`doctor` reports an unexpected OAuth runtime:** reinstall the matching
-  `posit-codex-gateway` release rather than upgrading its runtime directly.
+  `r-assistant-gateway` release rather than upgrading its runtime directly.
 - **The background gateway is not working:** run `status`, inspect `logs`, then
   use `stop` before starting it again.
 
@@ -289,3 +289,12 @@ included in [NOTICE](NOTICE).
 
 The original gateway code in this repository is copyright Carl Stone and is
 licensed under Apache-2.0. See [LICENSE](LICENSE).
+
+## Legal
+
+R Assistant Gateway is an unofficial community project. It is not affiliated
+with, endorsed by, or supported by Posit Software, PBC.
+
+Posit, RStudio, Positron, and Posit Assistant are trademarks of Posit Software,
+PBC, all rights reserved, and may be registered in the United States Patent and
+Trademark Office and in other countries.

@@ -11,7 +11,7 @@ RStudio rsession
     ⇅ JSON-RPC over the Assistant process's stdin/stdout
 Posit Assistant backend
     ⇅ OpenAI-compatible HTTP: GET /v1/models, POST /v1/responses
-posit-codex-gateway
+r-assistant-gateway
     ⇅ Codex Responses HTTP authenticated with ChatGPT OAuth
 ChatGPT/Codex
 ```

@@ -301,7 +301,7 @@ describe("sanitized Posit Assistant 1.3.0 request corpus", () => {
 		};
 		expect(ownershipMarker).toMatchObject({
 			schemaVersion: 1,
-			generator: "posit-codex-gateway sanitize-posit-corpus",
+			generator: "r-assistant-gateway sanitize-posit-corpus",
 		});
 		const requestFiles = (await readdir(new URL("requests/", corpusRoot)))
 			.filter((filename) => filename.endsWith(".json"))
@@ -355,7 +355,7 @@ describe("sanitized Posit Assistant 1.3.0 request corpus", () => {
 			);
 			const searchable = strings.join("\n");
 			expect(searchable).not.toMatch(/\/home\/|\/Users\/|\\Users\\/i);
-			expect(searchable).not.toContain("/Work/posit-codex-gateway");
+			expect(searchable).not.toContain("/Work/r-assistant-gateway");
 			expect(searchable).not.toMatch(
 				/7\.1\.9-arch|September 04|cb43a80e|\b(?:rs|call)_[A-Za-z0-9]{20,}\b/,
 			);

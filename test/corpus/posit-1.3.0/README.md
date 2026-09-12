@@ -32,7 +32,7 @@ capture_dir=/tmp/posit-golden-capture
 mkdir -p "$capture_dir/raw" "$capture_dir/runtime"
 printf '%s\n' setup >"$capture_dir/scenario"
 
-POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR="$capture_dir/runtime" \
+R_ASSISTANT_GATEWAY_INTERNAL_RUNTIME_DIR="$capture_dir/runtime" \
   node dist/cli.js --detach --host 127.0.0.1 --port 10532 \
   --models gpt-5.6-luna --responses-state memory
 
@@ -83,5 +83,5 @@ marker inventory and hashes both before replacement and before removal. Do not
 modify the output concurrently while sanitization is running.
 
 When finished, close RStudio, stop the capture proxy, stop the detached gateway
-with the same `POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR`, and remove the raw
+with the same `R_ASSISTANT_GATEWAY_INTERNAL_RUNTIME_DIR`, and remove the raw
 capture directory.

@@ -403,7 +403,7 @@ const markerFileHashes = Object.fromEntries(
 const markerContents = `${JSON.stringify(
 	{
 		schemaVersion: 1,
-		generator: "posit-codex-gateway sanitize-posit-corpus",
+		generator: "r-assistant-gateway sanitize-posit-corpus",
 		files: markerFileHashes,
 	},
 	null,
@@ -440,7 +440,7 @@ const validateOwnedDirectory = async (directory: string): Promise<void> => {
 	};
 	if (
 		parsedMarker.schemaVersion !== 1 ||
-		parsedMarker.generator !== "posit-codex-gateway sanitize-posit-corpus" ||
+		parsedMarker.generator !== "r-assistant-gateway sanitize-posit-corpus" ||
 		typeof parsedMarker.files !== "object" ||
 		parsedMarker.files === null ||
 		Array.isArray(parsedMarker.files) ||

@@ -9,3 +9,12 @@ Process-local Responses continuation state modifications:
 Copyright 2026 Carl Stone
 
 https://github.com/EvanZhouDev/openai-oauth/pull/20
+
+Posit trademarks
+
+R Assistant Gateway is an unofficial community project. It is not affiliated
+with, endorsed by, or supported by Posit Software, PBC.
+
+Posit, RStudio, Positron, and Posit Assistant are trademarks of Posit Software,
+PBC, all rights reserved, and may be registered in the United States Patent and
+Trademark Office and in other countries.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generator": "posit-codex-gateway sanitize-posit-corpus",
+  "generator": "r-assistant-gateway sanitize-posit-corpus",
   "files": {
     "0001-01-plain-chat.json": "5f681331e8b8d2a0100f7d42a0ac7c7727dce9e72e8487936592683bcbcf6902",
     "0002-02-project-file-tool.json": "30b3a0f508fc67db9a020732da769b1e7f1c2ab9937548bb3cad75f7dd9017de",

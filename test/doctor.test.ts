@@ -13,7 +13,7 @@ let runtimeRoot: string;
 const originalExtensionsRoot = process.env.POSITRON_EXTENSIONS_DIR;
 const originalPositRoot = process.env.POSIT_ASSISTANT_ROOT;
 const originalRuntimeRoot =
-	process.env.POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR;
+	process.env.R_ASSISTANT_GATEWAY_INTERNAL_RUNTIME_DIR;
 
 beforeEach(async () => {
 	positRoot = await mkdtemp(path.join(os.tmpdir(), "posit-assistant-doctor-"));
@@ -21,7 +21,7 @@ beforeEach(async () => {
 	await mkdir(runtimeRoot);
 	process.env.POSIT_ASSISTANT_ROOT = positRoot;
 	process.env.POSITRON_EXTENSIONS_DIR = path.join(positRoot, "extensions");
-	process.env.POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR = runtimeRoot;
+	process.env.R_ASSISTANT_GATEWAY_INTERNAL_RUNTIME_DIR = runtimeRoot;
 	vi.stubGlobal(
 		"fetch",
 		vi.fn(async () => Response.json({ ok: true, replay_state: "memory" })),
@@ -38,15 +38,15 @@ afterEach(async () => {
 		process.env.POSIT_ASSISTANT_ROOT = originalPositRoot;
 	}
 	if (originalRuntimeRoot === undefined) {
-		delete process.env.POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR;
+		delete process.env.R_ASSISTANT_GATEWAY_INTERNAL_RUNTIME_DIR;
 	} else {
-		process.env.POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR = originalRuntimeRoot;
+		process.env.R_ASSISTANT_GATEWAY_INTERNAL_RUNTIME_DIR = originalRuntimeRoot;
 	}
 	vi.unstubAllGlobals();
 	await rm(positRoot, { recursive: true, force: true });
 });
 
-describe.sequential("doctor gateway compatibility", () => {
+describe("doctor gateway compatibility", () => {
 	test("ignores the unrelated RStudio integration protocol", async () => {
 		await Promise.all([
 			writeFile(

@@ -14,7 +14,7 @@ const DEFAULT_PORT = 10532;
 
 const UPSTREAM_RUNTIME_DIRECTORY_VARIABLE = "OPENAI_OAUTH_INTERNAL_RUNTIME_DIR";
 const GATEWAY_RUNTIME_DIRECTORY_VARIABLE =
-	"POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR";
+	"R_ASSISTANT_GATEWAY_INTERNAL_RUNTIME_DIR";
 
 export const brandUpstreamCliText = (text: string): string => {
 	const help =
@@ -22,49 +22,49 @@ export const brandUpstreamCliText = (text: string): string => {
 		text.includes("\nUsage\n");
 	const updateGuidance = text.replace(
 		/A newer version of (?:@carl-stone\/)?openai-oauth is available: ([^\n]+)\.\nRun `npx (?:@carl-stone\/)?openai-oauth@latest` to use the newest version\./g,
-		"A newer pinned OAuth runtime is available: $1. Install a posit-codex-gateway release that supports it instead of upgrading the runtime directly.",
+		"A newer pinned OAuth runtime is available: $1. Install an r-assistant-gateway release that supports it instead of upgrading the runtime directly.",
 	);
 	const branded = help
 		? updateGuidance
 				.replaceAll(
 					"npx @carl-stone/openai-oauth@latest",
-					"npx posit-codex-gateway@latest",
+					"npx r-assistant-gateway@latest",
 				)
-				.replaceAll("npx openai-oauth@latest", "npx posit-codex-gateway@latest")
+				.replaceAll("npx openai-oauth@latest", "npx r-assistant-gateway@latest")
 		: updateGuidance;
 	return branded
 		.replace(
 			"Free OpenAI API access with your ChatGPT account.",
 			"Use Posit Assistant in RStudio or Positron with your ChatGPT account.",
 		)
-		.replaceAll("npx openai-oauth stop", "npx posit-codex-gateway stop")
-		.replaceAll("npx openai-oauth logs", "npx posit-codex-gateway logs")
-		.replaceAll("npx openai-oauth login", "npx posit-codex-gateway login")
+		.replaceAll("npx openai-oauth stop", "npx r-assistant-gateway stop")
+		.replaceAll("npx openai-oauth logs", "npx r-assistant-gateway logs")
+		.replaceAll("npx openai-oauth login", "npx r-assistant-gateway login")
 		.replaceAll(
 			"npx @carl-stone/openai-oauth stop",
-			"npx posit-codex-gateway stop",
+			"npx r-assistant-gateway stop",
 		)
 		.replaceAll(
 			"npx @carl-stone/openai-oauth logs",
-			"npx posit-codex-gateway logs",
+			"npx r-assistant-gateway logs",
 		)
 		.replaceAll(
 			"npx @carl-stone/openai-oauth login",
-			"npx posit-codex-gateway login",
+			"npx r-assistant-gateway login",
 		)
 		.replace(
 			"Start with `npx openai-oauth`",
-			"Start with `npx posit-codex-gateway`",
+			"Start with `npx r-assistant-gateway`",
 		)
 		.replace(
 			"Start with `npx @carl-stone/openai-oauth`",
-			"Start with `npx posit-codex-gateway`",
+			"Start with `npx r-assistant-gateway`",
 		)
 		.replaceAll("Proxy port. Default: 10531.", "Proxy port. Default: 10532.")
-		.replace("Default: stateless.", "Default: memory in posit-codex-gateway.")
+		.replace("Default: stateless.", "Default: memory in r-assistant-gateway.")
 		.replace(
-			"  npx posit-codex-gateway@latest login [options]",
-			"  npx posit-codex-gateway@latest login [options]\n  npx posit-codex-gateway@latest doctor",
+			"  npx r-assistant-gateway@latest login [options]",
+			"  npx r-assistant-gateway@latest login [options]\n  npx r-assistant-gateway@latest doctor",
 		)
 		.replace(
 			"  --login-timeout-ms <ms>    Login timeout. Default: 300000",
@@ -96,18 +96,18 @@ export const resolveGatewayRuntimeDirectory = (): string => {
 			os.homedir(),
 			"Library",
 			"Application Support",
-			"posit-codex-gateway",
+			"r-assistant-gateway",
 		);
 	}
 	if (process.platform === "win32") {
 		return path.join(
 			process.env.LOCALAPPDATA ?? path.join(os.homedir(), "AppData", "Local"),
-			"posit-codex-gateway",
+			"r-assistant-gateway",
 		);
 	}
 	return path.join(
 		process.env.XDG_STATE_HOME ?? path.join(os.homedir(), ".local", "state"),
-		"posit-codex-gateway",
+		"r-assistant-gateway",
 	);
 };
 
@@ -116,7 +116,7 @@ export const prepareUpstreamCliArgv = (
 ): { argv: string[]; diagnostics: boolean } => {
 	const diagnostics =
 		argv.includes("--diagnostics") ||
-		process.env.POSIT_CODEX_GATEWAY_DIAGNOSTICS === "1";
+		process.env.R_ASSISTANT_GATEWAY_DIAGNOSTICS === "1";
 	const forwarded = argv.filter((argument) => argument !== "--diagnostics");
 	const first = forwarded[0];
 	const serves =
@@ -362,7 +362,7 @@ export const runUpstreamCli = async (argv: string[]): Promise<void> => {
 		process.env[GATEWAY_RUNTIME_DIRECTORY_VARIABLE] ??
 		resolveGatewayRuntimeDirectory();
 	if (prepared.diagnostics) {
-		process.env.POSIT_CODEX_GATEWAY_DIAGNOSTICS = "1";
+		process.env.R_ASSISTANT_GATEWAY_DIAGNOSTICS = "1";
 	}
 	process.argv = [
 		process.argv[0] ?? process.execPath,
