@@ -14,7 +14,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 
 const execute = promisify(execFile);
-const root = await mkdtemp(path.join(os.tmpdir(), "posit-codex-cli-"));
+const root = await mkdtemp(path.join(os.tmpdir(), "r-assistant-gateway-cli-"));
 const runtimeDirectory = path.join(root, "runtime");
 const authFilePath = path.join(root, "auth.json");
 const positRoot = path.join(root, "posit-assistant");
@@ -27,7 +27,7 @@ const positRequest = JSON.parse(
 ) as Record<string, unknown>;
 const env = {
 	...process.env,
-	POSIT_CODEX_GATEWAY_INTERNAL_RUNTIME_DIR: runtimeDirectory,
+	R_ASSISTANT_GATEWAY_INTERNAL_RUNTIME_DIR: runtimeDirectory,
 	POSIT_ASSISTANT_ROOT: positRoot,
 };
 const receivedBodies: Array<Record<string, unknown>> = [];

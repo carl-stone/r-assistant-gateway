@@ -60,18 +60,18 @@ describe("upstream CLI delegation", () => {
 				"OpenAI OAuth is running. Stop with `npx openai-oauth stop`.",
 			),
 		).toBe(
-			"OpenAI OAuth is running. Stop with `npx posit-codex-gateway stop`.",
+			"OpenAI OAuth is running. Stop with `npx r-assistant-gateway stop`.",
 		);
 		expect(brandUpstreamCliText("Proxy port. Default: 10531.")).toBe(
 			"Proxy port. Default: 10532.",
 		);
 		expect(
 			brandUpstreamCliText("Stop with `npx @carl-stone/openai-oauth stop`."),
-		).toBe("Stop with `npx posit-codex-gateway stop`.");
+		).toBe("Stop with `npx r-assistant-gateway stop`.");
 		const updateNotice =
 			"A newer version of openai-oauth is available: 2.0.0 -> 2.1.0.\nRun `npx openai-oauth@latest` to use the newest version.";
 		expect(brandUpstreamCliText(updateNotice)).toBe(
-			"A newer pinned OAuth runtime is available: 2.0.0 -> 2.1.0. Install a posit-codex-gateway release that supports it instead of upgrading the runtime directly.",
+			"A newer pinned OAuth runtime is available: 2.0.0 -> 2.1.0. Install an r-assistant-gateway release that supports it instead of upgrading the runtime directly.",
 		);
 	});
 

@@ -174,7 +174,7 @@ export const checkCurrentCodexContract = async (
 					Accept: source.includes("api.github.com")
 						? "application/vnd.github.raw+json"
 						: "text/plain",
-					"User-Agent": "posit-codex-gateway-contract-check",
+					"User-Agent": "r-assistant-gateway-contract-check",
 					...(token && source.includes("api.github.com")
 						? { Authorization: `Bearer ${token}` }
 						: {}),
