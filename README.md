@@ -263,9 +263,6 @@ consider that configuration healthy for Posit Assistant. `doctor` and
 
 ## Development
 
-Start with [the interface and reverse-engineering notes](dev/README.md) to see
-which traffic belongs to each IDE, Posit Assistant, the gateway, and Codex.
-
 ```sh
 npm install
 npm run verify
